@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 756f3c1420bb9e841af2a0d3d78b74b4
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - rb: {instanceID: 0}
+  - ear: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
+  - eye: {fileID: 1547151288665781085, guid: 08d3cfb71330ee84a98382ce1a70fb4f, type: 3}
+  - foot: {fileID: 8545726922981596453, guid: 08e83c6aeef486b489be0f0c61c43e73, type: 3}
+  - hand: {fileID: 3339656060105008508, guid: 0fb8ace6112685749bb700032bf10e74, type: 3}
+  - mouth: {fileID: 3223810703643453681, guid: 338a4ee2d3339954487a3f832d14bf82, type: 3}
+  - shield: {fileID: 5986168849310010283, guid: c891b2b9678b12544aa7c9707090695d, type: 3}
+  - stomach: {fileID: 3331493411099893253, guid: 3a73e26cc893e464795ef9f80b0734b6, type: 3}
+  - brain: {fileID: 3633532752281699197, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
