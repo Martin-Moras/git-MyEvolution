@@ -3,8 +3,29 @@ using System;
 
 public class Atributes : MonoBehaviour
 {
-	public decimal UsedEnergie;
-	private float Health;
+	private decimal usedEnergy;
+	public decimal UsedEnergie 
+	{
+		get { return usedEnergy; }
+		private set
+		{
+			if (value < 0) print("EROR!!!!!!!!!!!!!!");
+			CheckEnergy();
+			usedEnergy = value;
+		}
+	}
+	private float health;
+	private float Health
+	{
+		get { return health; }
+		set
+		{
+			if (value < 0) value = 0;
+			health = value;
+			if (value > 0) return;
+			CheckDeath();
+		}
+	}
 	private string StoredFoodn;
 	[SerializeField] private GameManager GM;
 
@@ -14,23 +35,13 @@ public class Atributes : MonoBehaviour
 	{
 		if (UsedEnergie == 0) UsedEnergie = 5;
 		if (Health == 0) Health = 2;
-		CheckForDeath();
+		CheckDeath();
 	} 
 	private void Update()
 	{
 		StoredFoodn = UsedEnergie.ToString();
 	}
 
-	public void Damage(float damageAmount)
-	{
-		if (Health <= 0) return;
-		
-		if (Health < damageAmount) damageAmount = Health;
-
-		Health -= damageAmount;
-		
-		CheckForDeath();
-	}
 	public decimal DamageAndEat(float damageAmount)
 	{
 		if (Health <= 0)
@@ -47,42 +58,42 @@ public class Atributes : MonoBehaviour
 		return 0;
 		decimal Eat(decimal eatAmount)
 		{
-			CheckForDeath();
 			if (UsedEnergie < eatAmount)
 			{
 				eatAmount = UsedEnergie;
 			}
 			UsedEnergie -= eatAmount;
+			CheckDeath();
 			return eatAmount;
 		}
+	}
+	public void Damage(float damageAmount)
+	{
+		if (Health <= 0) return;
+		
+		if (Health < damageAmount) damageAmount = Health;
+
+		Health -= damageAmount;
+		
+		CheckDeath();
 	}
 	public void Heal(float healAmount)
 	{
 		Health += healAmount;
 	}
-	public void CheckForDeath()
+	public void CheckDeath()
 	{
+		if (transform.parent == null && transform.tag != "Brain" && Health != 0) Health = 0;
+		if (Health > 0) return;
+		if (CheckEnergy()) return;
 		if (isDead) return;
-		if (Health <= 0)
-		{
-			transform.DetachChildren();
-			isDead = true;
-		}
-		else return;
-		if (NoBrain()) AddRigidbody();
+		
+		isDead = true;
+		transform.DetachChildren();
 		if (transform.parent != null) transform.SetParent(null);
-
-		if (TryDestroyThis()) return;
+		AddRigidbody();
 		RemoveOrganScript();
-
-		bool TryDestroyThis()
-		{
-			transform.DetachChildren();
-			//if Energy = 0 destroy this gameobject
-			if (UsedEnergie > 0) return false;
-			Destroy(gameObject);
-			return true;
-		}
+		
 		void AddRigidbody()
 		{
 			if (gameObject.GetComponent<Rigidbody2D>() != null) return;
@@ -142,19 +153,19 @@ public class Atributes : MonoBehaviour
 				Destroy(brain);
 				foreach (GameObject child in brain.Organs)
 				{
-					child.GetComponent<Atributes>().CheckForDeath();
+					child.GetComponent<Atributes>().CheckDeath();
 				}
 				return;
 			}
 		}
-		bool NoBrain()
-		{
-			foreach(Transform trans in transform)
-			{
-				if (trans.GetComponent<Brain>() != null) 
-					return true;
-			}
-			return false;
-		}
+	}
+	public bool CheckEnergy()
+	{
+		if (!isDead) return false;
+		//if Energy = 0 destroy this gameobject
+		if (UsedEnergie > 0) return false;
+		
+		Destroy(gameObject);
+		return true;
 	}
 }

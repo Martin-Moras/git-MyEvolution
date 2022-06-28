@@ -1,9 +1,24 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+
+/*[Serializable]
+public class Test
+{
+	int A { get; set; }
+	int B { get; set; }
+	int C { get; set; }
+	int D { get; set; }
+	public Test(int a, int b, int c, int d)
+	{
+		A = a;
+		B = b;
+		C = c;
+		D = d;
+	}
+}*/
 
 public class Brain : MonoBehaviour
 {
@@ -14,6 +29,7 @@ public class Brain : MonoBehaviour
 	private decimal NeededBirthEnergy;
 	private int ChiledCount;
 
+	
 	[SerializeField] private string AvailableEnergyn;
 
 	private void Start()
@@ -119,7 +135,7 @@ public class Brain : MonoBehaviour
 		newOrgan.transform.rotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(0, 3) * 90);
 		//Create chiled
 		Brain chiledBrain = Instantiate(GM.Brain, transform.position, transform.rotation).GetComponent<Brain>();
-		chiledBrain.BirthOrgans = BirthOrgans;
+		chiledBrain.BirthOrgans = Clone(BirthOrgans);
 		chiledBrain.BirthOrgans.Add(newOrgan);
 
 		ChiledCount++;
@@ -186,5 +202,36 @@ public class Brain : MonoBehaviour
 			output.Add(organ);
 		}
 		return output;
+	}
+	public List<GameObject> Clone(List<GameObject> input)
+	{
+		List<GameObject> output = new();
+
+		/*Test newTest = new Test(0, 1, 2, 3);
+
+		Test test = DeepCopy(newTest);
+		List<GameObject> output = new();
+*/
+
+
+		foreach (GameObject current in input)
+		{
+			//output.Add(DeepCopy(current));
+			GameObject organ = Instantiate(current);
+			output.Add(organ);
+			Destroy(organ);
+		}
+		return output;
+
+		static T DeepCopy<T>(T other)
+		{
+			using (MemoryStream ms = new MemoryStream())
+			{
+				BinaryFormatter formatter = new BinaryFormatter();
+				formatter.Serialize(ms, other);
+				ms.Position = 0;
+				return (T)formatter.Deserialize(ms);
+			}
+		}
 	}
 }
