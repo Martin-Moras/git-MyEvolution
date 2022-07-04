@@ -83,7 +83,7 @@ public class Atributes : MonoBehaviour
 	}
 	public void CheckDeath()
 	{
-		if (transform.parent == null && transform.tag != "Brain" && Health != 0) Health = 0;
+		if (transform.parent == null && !transform.CompareTag("Brain") && Health != 0) Health = 0;
 		if (Health > 0) return;
 		if (CheckEnergy()) return;
 		if (isDead) return;
@@ -103,7 +103,7 @@ public class Atributes : MonoBehaviour
 		}
 		void RemoveOrganScript()
 		{
-			{ 
+			
 			Ear Ear = GetComponent<Ear>();
 			if (Ear != null)
 			{
@@ -146,12 +146,11 @@ public class Atributes : MonoBehaviour
 				Destroy(Stomach);
 				return;
 			}
-			}
 			Brain brain = GetComponent<Brain>();
 			if (brain != null)
 			{
 				Destroy(brain);
-				foreach (GameObject child in brain.Organs)
+				foreach (Organ child in brain.Organs)
 				{
 					child.GetComponent<Atributes>().CheckDeath();
 				}

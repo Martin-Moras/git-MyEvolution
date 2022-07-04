@@ -38,10 +38,12 @@ public class Stomach : MonoBehaviour
 	{
 		decimal getFoodAmount = .1m;
 
-		List<GameObject> allMouths = transform.parent.GetComponent<Brain>().GetOrgans("Mouth");
+		List<Organ> allMouths = transform.parent.GetComponent<Brain>().GetOrgans("Mouth");
 
-		foreach (GameObject mouth in allMouths)
-		{ 
+		foreach (Organ organ in allMouths)
+		{
+			Mouth mouth = (Mouth)organ.OrganScript;
+
 			decimal freeFoodStorage = FoodStorageSize - StoredFood;
 			if (freeFoodStorage - getFoodAmount < 0) return;
 

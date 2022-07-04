@@ -1,30 +1,26 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-/*[Serializable]
-public class Test
-{
-	int A { get; set; }
-	int B { get; set; }
-	int C { get; set; }
-	int D { get; set; }
-	public Test(int a, int b, int c, int d)
-	{
-		A = a;
-		B = b;
-		C = c;
-		D = d;
-	}
-}*/
-
 public class Brain : MonoBehaviour
 {
 	[SerializeField] private GameManager GM;
-	public List<GameObject> BirthOrgans { get; set; }
-	public List<GameObject> Organs { get; set; }
+	public List<Organ> BirthOrgans { get; set; }
+	private List<Organ> organs;
+	public List<Organ> Organs 
+	{
+		get
+		{
+			return organs;
+		}
+		set
+		{
+			organs = value;
+		}
+	}
 	private decimal AvailableEnergy;
 	private decimal NeededBirthEnergy;
 	private int ChiledCount;
@@ -34,6 +30,7 @@ public class Brain : MonoBehaviour
 
 	private void Start()
 	{
+		var d = new Organ("", Vector2.zero, 0, 0, new Brain(), new Atributes());
 		SetBirthOrgans();
 		SetNeededBirthEnergy();
 		CreateBody();
@@ -54,8 +51,8 @@ public class Brain : MonoBehaviour
 		BirthOrgans = new();
 		foreach (Transform currentOrgan in transform)
 		{
-			if (currentOrgan.tag != "Organ") continue;
-			BirthOrgans.Add(currentOrgan.gameObject);
+			if (!currentOrgan.CompareTag("Organ")) continue;
+			BirthOrgans.Add(GM.ToOrgan(currentOrgan.gameObject));
 		}
 	}
 	private void SetNeededBirthEnergy()
@@ -65,12 +62,23 @@ public class Brain : MonoBehaviour
 	private void CreateBody()
 	{
 		if (transform.childCount > 0) return;
-		foreach (GameObject organ in BirthOrgans)
+		foreach (Organ organ in BirthOrgans)
 		{
-			Instantiate(organ, transform);
+			Instantiate(GM.ToGameObject(organ), transform);
 		}
 	}
 	//Update
+	private void UpdateOrgans()
+	{
+		Organs = new();
+		foreach (Transform currentOrgan in transform)
+		{
+			if (!currentOrgan.CompareTag("Organ")) continue;
+			var d = GM.ToOrgan(currentOrgan.gameObject);
+			GameObject gameObject = d.gameObject;
+			Organs.Add();
+		}
+	}
 	private void ControlOrgans()
 	{
 		Controllfeet();
@@ -82,10 +90,11 @@ public class Brain : MonoBehaviour
 			float xAxis = Input.GetAxisRaw("Horizontal");
 			float yAxis = Input.GetAxisRaw("Vertical");
 
-			foreach (GameObject foot in GetOrgans("Foot"))
+			foreach (Organ organ in GetOrgans("Foot"))
 			{
-				foot.GetComponent<Foot>().Walk(new Vector2(xAxis, yAxis));
-				foot.GetComponent<Foot>().Turn(TurnDir());
+				Foot foot1 = (Foot)organ.OrganScript;
+				foot1.Walk(new Vector2(xAxis, yAxis));
+				foot1.Turn(TurnDir());
 			}
 			int TurnDir()
 			{
@@ -98,27 +107,19 @@ public class Brain : MonoBehaviour
 		{
 			if (Input.GetKeyDown(KeyCode.E))
 			{
-				foreach(GameObject organ in GetOrgans("Mouth"))
+				foreach(Organ organ in GetOrgans("Mouth"))
 				{
-					organ.GetComponent<Mouth>().Bite();
+					Mouth mouth = (Mouth)organ.OrganScript;
+					mouth.Bite();
 				}
 			}
 		}
 		void ControllEye()
 		{
-			foreach (GameObject bodyPart in GetOrgans("Eye"))
+			foreach (Organ bodyPart in GetOrgans("Eye"))
 			{
 				//print(bodyPart.GetComponent<Eye>().Look().Count);
 			}
-		}
-	}
-	private void UpdateOrgans()
-	{
-		Organs = new();
-		foreach (Transform currentOrgan in transform)
-		{
-			if (currentOrgan.tag != "Organ") continue;
-			Organs.Add(currentOrgan.gameObject);
 		}
 	}
 	private void Birth()
@@ -126,31 +127,49 @@ public class Brain : MonoBehaviour
 		if (AvailableEnergy < NeededBirthEnergy) return;
 		AvailableEnergy -= NeededBirthEnergy;
 
-		//Create chiledOrgan
 		List<Vector2> freeOrganPlaces = FreeOrganPlaces();
-		
-		GameObject newOrgan = new();
-		newOrgan = GM.AllOrgans[UnityEngine.Random.Range(0, GM.AllOrgans.Count - 1)];
-		newOrgan.transform.localPosition = freeOrganPlaces[UnityEngine.Random.Range(0, freeOrganPlaces.Count - 1)];
-		newOrgan.transform.rotation = Quaternion.Euler(0, 0, UnityEngine.Random.Range(0, 3) * 90);
+
 		//Create chiled
 		Brain chiledBrain = Instantiate(GM.Brain, transform.position, transform.rotation).GetComponent<Brain>();
-		chiledBrain.BirthOrgans = Clone(BirthOrgans);
-		chiledBrain.BirthOrgans.Add(newOrgan);
+		List<Organ> newOrganList = GM.CopyOrganList(BirthOrgans);
+		newOrganList = AddRemoveOrgan(newOrganList);
+
+		chiledBrain.BirthOrgans = newOrganList;
+
 
 		ChiledCount++;
 
+		List<Organ> AddRemoveOrgan(List<Organ> inputList)
+		{
+			inputList.Add(AddOrgan());
+			return inputList;
+			
+			Organ AddOrgan()
+			{
+				string name = GM.AllOrganNames[UnityEngine.Random.Range(0, GM.AllOrganNames.Count - 1)];
+				Vector2 LocalPos = freeOrganPlaces[UnityEngine.Random.Range(0, freeOrganPlaces.Count - 1)];
+				int LocalRot = UnityEngine.Random.Range(0, 3) * 90;
+				object OrganScript = GM.AllOrganScriptsDict[name];
+				Organ newOrgan = new Organ(name, LocalPos, LocalRot, 0, OrganScript, new Atributes());
+	
+				return newOrgan;
+			}
+		}
+
+		
 		List<Vector2> FreeOrganPlaces()
 		{
 			List<Vector2> output = new();
-			List<GameObject> myOrgansAndBrain = new();
-			myOrgansAndBrain.Add(gameObject);
-			myOrgansAndBrain = Organs;
-			List<Vector2> organPos = OrganPos();
+			List<Vector2> organPosList = GetPos(Organs);
 
-			foreach (GameObject organ in myOrgansAndBrain)
+			foreach (Vector2 organPos in organPosList)
 			{
-				Vector2 currentOrganPos = organ.transform.localPosition;
+				CheckPos(organPos);
+			}
+			return output;
+
+			void CheckPos(Vector2 organPos)
+			{
 				Vector2[] checkDir = new Vector2[]
 				{
 					new Vector2(.1f, 0f),
@@ -161,27 +180,31 @@ public class Brain : MonoBehaviour
 
 				foreach (Vector2 dir in checkDir)
 				{
-					Vector2 pos = currentOrganPos + dir;
+					Vector2 pos = organPos + dir;
 
-					if (IfFree(organPos, output, pos)) output.Add(pos);
+					CheckDir(pos);
 				}
-
-				bool IfFree(List<Vector2> organPos, List<Vector2> output, Vector2 pos)
+				void CheckDir(Vector2 pos)
 				{
-					if (output.Exists(x => x == pos)) return false;
-					if (organPos.Exists(x => x == pos)) return false;
-					return true;
+					if (IsFree(organPosList, output, pos)) output.Add(pos);
+					
+					bool IsFree(List<Vector2> organPos, List<Vector2> output, Vector2 pos)
+					{
+						if (output.Exists(x => x == pos)) return false;
+						if (organPos.Exists(x => x == pos)) return false;
+						return true;
+					}
 				}
 			}
-			return output;
 
-			List<Vector2> OrganPos()
+			List<Vector2> GetPos(List<Organ> input)
 			{
 				List<Vector2> output = new();
-				foreach (GameObject organ in myOrgansAndBrain)
+				foreach (Organ organ in input)
 				{
-					output.Add(organ.transform.localPosition);
+					output.Add(organ.LocalPos);
 				}
+				output.Add(new Vector2(0, 0));
 				return output;
 			}
 		}
@@ -191,47 +214,16 @@ public class Brain : MonoBehaviour
 	{
 		AvailableEnergy += amount;
 	}
-	public List<GameObject> GetOrgans(string organName)
+	public List<Organ> GetOrgans(string organName)
 	{
-		List<GameObject> output = new();
+		List<Organ> output = new();
 
-		foreach (GameObject organ in Organs)
+		foreach (Organ organ in Organs)
 		{
-			if (!organ.name.Contains(organName)) continue;
+			if (!organ.Name.Contains(organName)) continue;
 
 			output.Add(organ);
 		}
 		return output;
-	}
-	public List<GameObject> Clone(List<GameObject> input)
-	{
-		List<GameObject> output = new();
-
-		/*Test newTest = new Test(0, 1, 2, 3);
-
-		Test test = DeepCopy(newTest);
-		List<GameObject> output = new();
-*/
-
-
-		foreach (GameObject current in input)
-		{
-			//output.Add(DeepCopy(current));
-			GameObject organ = Instantiate(current);
-			output.Add(organ);
-			Destroy(organ);
-		}
-		return output;
-
-		static T DeepCopy<T>(T other)
-		{
-			using (MemoryStream ms = new MemoryStream())
-			{
-				BinaryFormatter formatter = new BinaryFormatter();
-				formatter.Serialize(ms, other);
-				ms.Position = 0;
-				return (T)formatter.Deserialize(ms);
-			}
-		}
 	}
 }
