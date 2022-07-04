@@ -21,6 +21,7 @@ public class Brain : MonoBehaviour
 			organs = value;
 		}
 	}
+	private List<GameObject> GameObjectOrgans;
 	private decimal AvailableEnergy;
 	private decimal NeededBirthEnergy;
 	private int ChiledCount;
@@ -64,19 +65,17 @@ public class Brain : MonoBehaviour
 		if (transform.childCount > 0) return;
 		foreach (Organ organ in BirthOrgans)
 		{
-			Instantiate(GM.ToGameObject(organ), transform);
+			GM.ToGameObject(organ).transform.parent = transform;
 		}
 	}
 	//Update
 	private void UpdateOrgans()
 	{
 		Organs = new();
-		foreach (Transform currentOrgan in transform)
+		foreach (Transform organ in transform)
 		{
-			if (!currentOrgan.CompareTag("Organ")) continue;
-			var d = GM.ToOrgan(currentOrgan.gameObject);
-			GameObject gameObject = d.gameObject;
-			Organs.Add();
+			if (!organ.CompareTag("Organ")) continue;
+			Organs.Add(GM.ToOrgan(organ.gameObject));
 		}
 	}
 	private void ControlOrgans()

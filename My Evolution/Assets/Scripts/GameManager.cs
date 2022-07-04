@@ -31,6 +31,24 @@ public class GameManager : ScriptableObject
 			};
 		}
 	}
+	public Dictionary<string, GameObject> AllOrgansDict
+	{
+		get
+		{
+			Dictionary<string, GameObject> output = new()
+			{
+				{ "Ear", Ear },
+				{ "Eye", Eye },
+				{ "Foot", Foot },
+				{ "Hand", Hand },
+				{ "Mouth", Mouth },
+				{ "Shield", Shield },
+				{ "Stomach", Stomach },
+				{ "Brain", Brain },
+			};
+			return output;
+		}
+	}
 	public List<object> AllOrganScripts
 	{
 		get
@@ -67,14 +85,14 @@ public class GameManager : ScriptableObject
 	}
 	public Dictionary<string, object> AllOrganScriptsDict = new()
 	{
-		{ "Ear", new Ear() },
-		{ "Eye", new Eye() },
-		{ "Foot", new Foot() },
-		{ "Hand", new Hand() },
-		{ "Mouth", new Mouth() },
-		{ "Shield", new Shield() },
-		{ "Stomach", new Stomach() },
-		{ "Brain", new Brain() },
+		{ "Ear", Instantiate(new Ear()) },
+		{ "Eye", Instantiate(new Eye()) },
+		{ "Foot", Instantiate(new Foot()) },
+		{ "Hand", Instantiate(new Hand()) },
+		{ "Mouth", Instantiate(new Mouth()) },
+		{ "Shield", Instantiate(new Shield()) },
+		{ "Stomach", Instantiate(new Stomach()) },
+		{ "Brain", Instantiate(new Brain()) },
 	};
 
 	public Organ ToOrgan(GameObject inputOrgan)
@@ -85,18 +103,18 @@ public class GameManager : ScriptableObject
 				inputOrgan.transform.localPosition,
 				0,
 				(int)inputOrgan.transform.localRotation.z,
-				inputOrgan.name,
-				new Atributes()
+				GetOrganScript(inputOrgan),
+				inputOrgan.GetComponent<Atributes>()
 			);
 	}
 	public GameObject ToGameObject(Organ inputOrgan)
 	{
-		GameObject outputOrgan = new();
+		GameObject outputOrgan = Instantiate(AllOrgansDict[inputOrgan.Name]);
 		outputOrgan.name = inputOrgan.Name;
 		outputOrgan.transform.localPosition = inputOrgan.LocalPos;
 		outputOrgan.transform.localRotation = Quaternion.Euler(0, 0, inputOrgan.LocalRot);
-		AddOrganScript(inputOrgan.OrganScript, outputOrgan);
-		outputOrgan.AddComponent<Atributes>();
+		Atributes atributes = outputOrgan.GetComponent<Atributes>();
+		atributes = inputOrgan.OrganAtributes;
 
 		return outputOrgan;
 	}
@@ -111,15 +129,68 @@ public class GameManager : ScriptableObject
 	}
 	public Organ NewOrgan(Organ inputOrgan)
 	{
-		return new Organ(inputOrgan.name, inputOrgan.LocalPos, inputOrgan.LocalRot, inputOrgan.Level, Reset(inputOrgan.OrganScript), new Atributes());
+		return new Organ(inputOrgan.Name, inputOrgan.LocalPos, inputOrgan.LocalRot, inputOrgan.Level, inputOrgan.OrganScript.GetType(), new Atributes());
 	}
 	public T Reset<T>(T input)
 	{
-		return default(T);
+		return default;
 	}
-	public T AddOrganScript<T>(T input, GameObject gameObject)
+	public GameObject AddOrganScript(object input, GameObject gameObject)
 	{
-		return gameObject.GetComponent<T>();
+		if (input.GetType() == typeof(Ear)) gameObject.AddComponent<Ear>();
+		else if (input.GetType() == typeof(Eye)) gameObject.AddComponent<Eye>();
+		else if (input.GetType() == typeof(Foot)) gameObject.AddComponent<Foot>();
+		else if (input.GetType() == typeof(Hand)) gameObject.AddComponent<Hand>();
+		else if (input.GetType() == typeof(Mouth)) gameObject.AddComponent<Mouth>();
+		else if (input.GetType() == typeof(Shield)) gameObject.AddComponent<Shield>();
+		else if (input.GetType() == typeof(Brain)) gameObject.AddComponent<Brain>();
+
+		return gameObject;
+	}
+	public object GetOrganScript(GameObject gameObject)
+	{
+		Ear ear = gameObject.GetComponent<Ear>();
+		if (ear != null)
+		{
+			return ear;
+		}
+		Eye eye = gameObject.GetComponent<Eye>();
+		if (eye != null)
+		{
+			return eye;
+		}
+		Foot foot = gameObject.GetComponent<Foot>();
+		if (foot != null)
+		{
+			return foot;
+		}
+		Hand hand = gameObject.GetComponent<Hand>();
+		if (hand != null)
+		{
+			return hand;
+		}
+		Mouth mouth = gameObject.GetComponent<Mouth>();
+		if (mouth != null)
+		{
+			return mouth;
+		}
+		Shield shield = gameObject.GetComponent<Shield>();
+		if (shield != null)
+		{
+			return shield;
+		}
+		Stomach stomach = gameObject.GetComponent<Stomach>();
+		if (stomach != null)
+		{
+			return stomach;
+		}
+
+		Brain brain = gameObject.GetComponent<Brain>();
+		if (brain != null)
+		{
+			return brain;
+		}
+		return null;
 	}
 }
 	/*public GameObject AddOrganScript(GameObject inputObject, string name)

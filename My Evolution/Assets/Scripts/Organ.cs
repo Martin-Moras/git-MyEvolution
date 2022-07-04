@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Organ : MonoBehaviour
+public class Organ
 {
 	[SerializeField] private GameManager GM;
 
@@ -14,9 +14,7 @@ public class Organ : MonoBehaviour
 		get { return organScript; }
 		set
 		{
-			string s = value as string;
-			if (s == null) return;
-			organScript = GM.AllOrganScriptsDict[s];
+			organScript = value;
 			/*var input = value as GameObject;
 			if (input != null)
 			{
@@ -75,7 +73,7 @@ public class Organ : MonoBehaviour
 		OrganScript = organScript;
 		OrganAtributes = organAtributes;
 	}
-	public Organ()
+	/*public Organ()
 	{
 		Name = "";
 		LocalPos = Vector2.zero;
@@ -83,5 +81,6 @@ public class Organ : MonoBehaviour
 		Level = 0;
 		OrganScript = null;
 		OrganAtributes = new Atributes();
-	}
+	}*/
+	public Organ() { }
 }
