@@ -6,14 +6,29 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GM", menuName = "Game Manager")]
 public class GameManager : ScriptableObject
 {
-	[SerializeField] public GameObject Ear;
-	[SerializeField] public GameObject Eye;
-	[SerializeField] public GameObject Foot;
-	[SerializeField] public GameObject Hand;
-	[SerializeField] public GameObject Mouth;
-	[SerializeField] public GameObject Shield;
-	[SerializeField] public GameObject Stomach;
-	[SerializeField] public GameObject Brain;
+	public GameObject Ear;
+	public GameObject Eye;
+	public GameObject Foot;
+	public GameObject Hand;
+	public GameObject Mouth;
+	public GameObject Shield;
+	public GameObject Stomach;
+	public GameObject Brain;
+	
+	public GameObject Egg;
+
+	[SerializeField] private float Ear_NeededEnergy;
+	[SerializeField] private float Eye_NeededEnergy;
+	[SerializeField] private float Foot_NeededEnergy;
+	[SerializeField] private float Hand_NeededEnergy;
+	[SerializeField] private float Mouth_NeededEnergy;
+	[SerializeField] private float Shield_NeededEnergy;
+	[SerializeField] private float Stomach_NeededEnergy;
+	[SerializeField] private float Brain_NeededEnergy;
+
+
+	[SerializeField] private float RbDrag;
+	[SerializeField] private float RbAngDrag;
 
 	public List<GameObject> AllOrgans
 	{
@@ -35,7 +50,7 @@ public class GameManager : ScriptableObject
 	{
 		get
 		{
-			Dictionary<string, GameObject> output = new()
+			return  new()
 			{
 				{ "Ear", Ear },
 				{ "Eye", Eye },
@@ -44,25 +59,24 @@ public class GameManager : ScriptableObject
 				{ "Mouth", Mouth },
 				{ "Shield", Shield },
 				{ "Stomach", Stomach },
-				{ "Brain", Brain },
+				{ "Brain", Brain }
 			};
-			return output;
 		}
 	}
-	public List<object> AllOrganScripts
+	public Dictionary<string, float> NeededEnergyDict
 	{
 		get
 		{
 			return new()
 			{
-				new Ear(),
-				new Eye(),
-				new Foot(),
-				new Hand(),
-				new Mouth(),
-				new Shield(),
-				new Stomach(),
-				new Brain()
+				{ "Ear", Ear_NeededEnergy },
+				{ "Eye", Eye_NeededEnergy },
+				{ "Foot", Foot_NeededEnergy },
+				{ "Hand", Hand_NeededEnergy },
+				{ "Mouth", Mouth_NeededEnergy },
+				{ "Shield", Shield_NeededEnergy },
+				{ "Stomach", Stomach_NeededEnergy },
+				{ "Brain", Brain_NeededEnergy }
 			};
 		}
 	}
@@ -83,17 +97,6 @@ public class GameManager : ScriptableObject
 			};
 		}
 	}
-	public Dictionary<string, object> AllOrganScriptsDict = new()
-	{
-		{ "Ear", Instantiate(new Ear()) },
-		{ "Eye", Instantiate(new Eye()) },
-		{ "Foot", Instantiate(new Foot()) },
-		{ "Hand", Instantiate(new Hand()) },
-		{ "Mouth", Instantiate(new Mouth()) },
-		{ "Shield", Instantiate(new Shield()) },
-		{ "Stomach", Instantiate(new Stomach()) },
-		{ "Brain", Instantiate(new Brain()) },
-	};
 
 	public Organ ToOrgan(GameObject inputOrgan)
 	{
@@ -103,18 +106,16 @@ public class GameManager : ScriptableObject
 				inputOrgan.transform.localPosition,
 				0,
 				(int)inputOrgan.transform.localRotation.z,
-				GetOrganScript(inputOrgan),
-				inputOrgan.GetComponent<Atributes>()
+				this,
+				0
 			);
 	}
-	public GameObject ToGameObject(Organ inputOrgan)
+	public GameObject ToGameObject(Organ inputOrgan, Transform parent)
 	{
-		GameObject outputOrgan = Instantiate(AllOrgansDict[inputOrgan.Name]);
+		GameObject outputOrgan = Instantiate(AllOrgansDict[inputOrgan.Name], parent);
 		outputOrgan.name = inputOrgan.Name;
 		outputOrgan.transform.localPosition = inputOrgan.LocalPos;
 		outputOrgan.transform.localRotation = Quaternion.Euler(0, 0, inputOrgan.LocalRot);
-		Atributes atributes = outputOrgan.GetComponent<Atributes>();
-		atributes = inputOrgan.OrganAtributes;
 
 		return outputOrgan;
 	}
@@ -123,120 +124,55 @@ public class GameManager : ScriptableObject
 		List<Organ> output = new();
 		foreach (Organ inputOrgan in input)
 		{
-			output.Add(NewOrgan(inputOrgan));
+			output.Add(inputOrgan.Clone());
 		}
 		return output;
 	}
-	public Organ NewOrgan(Organ inputOrgan)
+	//Rigidbody
+	public Rigidbody2D AddRb(GameObject input)
 	{
-		return new Organ(inputOrgan.Name, inputOrgan.LocalPos, inputOrgan.LocalRot, inputOrgan.Level, inputOrgan.OrganScript.GetType(), new Atributes());
-	}
-	public T Reset<T>(T input)
-	{
-		return default;
-	}
-	public GameObject AddOrganScript(object input, GameObject gameObject)
-	{
-		if (input.GetType() == typeof(Ear)) gameObject.AddComponent<Ear>();
-		else if (input.GetType() == typeof(Eye)) gameObject.AddComponent<Eye>();
-		else if (input.GetType() == typeof(Foot)) gameObject.AddComponent<Foot>();
-		else if (input.GetType() == typeof(Hand)) gameObject.AddComponent<Hand>();
-		else if (input.GetType() == typeof(Mouth)) gameObject.AddComponent<Mouth>();
-		else if (input.GetType() == typeof(Shield)) gameObject.AddComponent<Shield>();
-		else if (input.GetType() == typeof(Brain)) gameObject.AddComponent<Brain>();
+		if (input.GetComponent<Rigidbody2D>() != null) return null;
 
-		return gameObject;
-	}
-	public object GetOrganScript(GameObject gameObject)
-	{
-		Ear ear = gameObject.GetComponent<Ear>();
-		if (ear != null)
-		{
-			return ear;
-		}
-		Eye eye = gameObject.GetComponent<Eye>();
-		if (eye != null)
-		{
-			return eye;
-		}
-		Foot foot = gameObject.GetComponent<Foot>();
-		if (foot != null)
-		{
-			return foot;
-		}
-		Hand hand = gameObject.GetComponent<Hand>();
-		if (hand != null)
-		{
-			return hand;
-		}
-		Mouth mouth = gameObject.GetComponent<Mouth>();
-		if (mouth != null)
-		{
-			return mouth;
-		}
-		Shield shield = gameObject.GetComponent<Shield>();
-		if (shield != null)
-		{
-			return shield;
-		}
-		Stomach stomach = gameObject.GetComponent<Stomach>();
-		if (stomach != null)
-		{
-			return stomach;
-		}
+		Rigidbody2D outputRb = input.AddComponent<Rigidbody2D>();
+		outputRb.drag = RbDrag;
+		outputRb.angularDrag = RbAngDrag;
 
-		Brain brain = gameObject.GetComponent<Brain>();
-		if (brain != null)
-		{
-			return brain;
-		}
-		return null;
+		return outputRb;
+	}
+	//Math
+	public static float Lerp(float a, float b, float t)
+	{
+		//return a + (b - a) * t;
+		return (1 - t) * a + b * t;
+	}
+	public static float InvLerp(float a, float b, float v)
+	{
+		//return b - a * v;
+		return (v - a) / (b - a);
+	}
+	public static float Remap(float iMin, float iMax, float oMin, float oMax, float value)
+	{
+		//i = input range
+		//o = output range
+		float t = InvLerp(iMin, iMax, value);
+		return Lerp(oMax, oMin, t);
 	}
 }
-	/*public GameObject AddOrganScript(GameObject inputObject, string name)
+/*public object GetOrganScript(GameObject obj)
 	{
-		string type = name;
-
-		switch (type)
-		{
-			case "Ear":
-				Ear ear = outputOrgan.AddComponent<Ear>();
-				ear = (Ear)inputOrgan.OrganScript;
-				break;
-
-			case "Eye":
-				Eye eye = outputOrgan.AddComponent<Eye>();
-				eye = (Eye)inputOrgan.OrganScript;
-				break;
-
-			case "Foot":
-				Foot foot = outputOrgan.AddComponent<Foot>();
-				foot = (Foot)inputOrgan.OrganScript;
-				break;
-
-			case "Hand":
-				Hand hand = outputOrgan.AddComponent<Hand>();
-				hand = (Hand)inputOrgan.OrganScript;
-				break;
-
-			case "Mouth":
-				Mouth mouth = outputOrgan.AddComponent<Mouth>();
-				mouth = (Mouth)inputOrgan.OrganScript;
-				break;
-
-			case "Shield":
-				Shield shield = outputOrgan.AddComponent<Shield>();
-				shield = (Shield)inputOrgan.OrganScript;
-				break;
-
-			case "Stomach":
-				Stomach stomach = outputOrgan.AddComponent<Stomach>();
-				stomach = (Stomach)inputOrgan.OrganScript;
-				break;
-
-			case "Brain":
-				Brain brain = outputOrgan.AddComponent<Brain>();
-				brain = (Brain)inputOrgan.OrganScript;
-				break;
-		}
+		obj.TryGetComponent(out Eye eye);
+		if (eye != null) return eye;
+		obj.TryGetComponent(out Foot foot);
+		if (foot != null) return foot;
+		obj.TryGetComponent(out Hand hand);
+		if (hand != null) return hand;
+		obj.TryGetComponent(out Mouth mouth);
+		if (mouth != null) return mouth;
+		obj.TryGetComponent(out Shield shield);
+		if (shield != null) return shield;
+		obj.TryGetComponent(out Stomach stomach);
+		if (stomach != null) return stomach;
+		obj.TryGetComponent(out Brain brain);
+		if (brain != null) return brain;
+		return null;
 	}*/

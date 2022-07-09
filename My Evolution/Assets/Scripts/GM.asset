@@ -20,3 +20,14 @@ MonoBehaviour:
   Shield: {fileID: 5986168849310010283, guid: c891b2b9678b12544aa7c9707090695d, type: 3}
   Stomach: {fileID: 3331493411099893253, guid: 3a73e26cc893e464795ef9f80b0734b6, type: 3}
   Brain: {fileID: 3633532752281699197, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+  Egg: {fileID: 7212910387707076604, guid: c4182fa9b353aab49a329f8071272c1a, type: 3}
+  Ear_NeededEnergy: 0.5
+  Eye_NeededEnergy: 0.5
+  Foot_NeededEnergy: 0.5
+  Hand_NeededEnergy: 0.5
+  Mouth_NeededEnergy: 0.5
+  Shield_NeededEnergy: 0.5
+  Stomach_NeededEnergy: 0.5
+  Brain_NeededEnergy: 0.5
+  RbDrag: 2
+  RbAngDrag: 2

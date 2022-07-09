@@ -3,6 +3,9 @@ using System;
 
 public class Atributes : MonoBehaviour
 {
+	[SerializeField] private GameManager GM;
+	public UnityEngine.Object OrganScript;
+	public decimal Level = 1;
 	private decimal usedEnergy;
 	public decimal UsedEnergie 
 	{
@@ -21,20 +24,22 @@ public class Atributes : MonoBehaviour
 		set
 		{
 			if (value < 0) value = 0;
+			if (value == health) return;
+
 			health = value;
 			if (value > 0) return;
 			CheckDeath();
 		}
 	}
+	public float NeededEnergy { get; private set; }
 	private string StoredFoodn;
-	[SerializeField] private GameManager GM;
 
 	private bool isDead = false;
 
 	private void Start()
 	{
-		if (UsedEnergie == 0) UsedEnergie = 5;
-		if (Health == 0) Health = 2;
+		SetAtributes();
+		if (gameObject.TryGetComponent(out Brain b)) GM.AddRb(gameObject);
 		CheckDeath();
 	} 
 	private void Update()
@@ -42,29 +47,34 @@ public class Atributes : MonoBehaviour
 		StoredFoodn = UsedEnergie.ToString();
 	}
 
-	public decimal DamageAndEat(float damageAmount)
+	private void SetAtributes()
 	{
-		if (Health <= 0)
-			return Eat(Convert.ToDecimal(damageAmount));
+		if (UsedEnergie == 0) UsedEnergie = 5;
+		if (Health == 0) Health = 2;
+		GM.NeededEnergyDict.TryGetValue(gameObject.name, out float neededEnergy);
+		NeededEnergy = neededEnergy;
+	}
+	public void DamageAndEat(ref decimal sorce, decimal amount)
+	{
+		float amountF = Convert.ToSingle(amount);
+		if (Health <= 0) GetFoot(ref sorce, amount);
 		
-		if (Health < damageAmount)
+		if (Health < amountF)
 		{
-			decimal eatAmount = Convert.ToDecimal(damageAmount - Health);
-			damageAmount = Health;
-			Damage(damageAmount);
-			return Eat(eatAmount);
+			decimal eatAmount = amount - Convert.ToDecimal(Health);
+			amountF = Health;
+			Damage(amountF);
+			GetFoot(ref sorce, eatAmount);
 		}
-		Damage(damageAmount);
-		return 0;
-		decimal Eat(decimal eatAmount)
+		Damage(amountF);
+		
+		void GetFoot(ref decimal sorce, decimal eatAmount)
 		{
-			if (UsedEnergie < eatAmount)
-			{
-				eatAmount = UsedEnergie;
-			}
+			if (eatAmount <= 0) return;
+			if (UsedEnergie < eatAmount) eatAmount = UsedEnergie;
+			
 			UsedEnergie -= eatAmount;
-			CheckDeath();
-			return eatAmount;
+			sorce += eatAmount;
 		}
 	}
 	public void Damage(float damageAmount)
@@ -79,11 +89,12 @@ public class Atributes : MonoBehaviour
 	}
 	public void Heal(float healAmount)
 	{
+		if (healAmount <= 0) return;
 		Health += healAmount;
 	}
 	public void CheckDeath()
 	{
-		if (transform.parent == null && !transform.CompareTag("Brain") && Health != 0) Health = 0;
+		if (transform.parent == null && transform.CompareTag("Organ")) Health = 0;
 		if (Health > 0) return;
 		if (CheckEnergy()) return;
 		if (isDead) return;
@@ -91,79 +102,27 @@ public class Atributes : MonoBehaviour
 		isDead = true;
 		transform.DetachChildren();
 		if (transform.parent != null) transform.SetParent(null);
-		AddRigidbody();
+		GM.AddRb(gameObject);
 		RemoveOrganScript();
 		
-		void AddRigidbody()
-		{
-			if (gameObject.GetComponent<Rigidbody2D>() != null) return;
-			
-			Rigidbody2D deadRb = gameObject.AddComponent<Rigidbody2D>();
-			deadRb.drag = 2;
-		}
 		void RemoveOrganScript()
 		{
-			
-			Ear Ear = GetComponent<Ear>();
-			if (Ear != null)
+			if (OrganScript.name == "Brain")
 			{
-				Destroy(Ear);
-				return;
-			}
-			Eye Eye = GetComponent<Eye>();
-			if (Eye != null)
-			{
-				Destroy(Eye);
-				return;
-			}
-			Foot Foot = GetComponent<Foot>();
-			if (Foot != null)
-			{
-				Destroy(Foot);
-				return;
-			}
-			Hand Hand = GetComponent<Hand>();
-			if (Hand != null)
-			{
-				Destroy(Hand);
-				return;
-			}
-			Mouth Mouth = GetComponent<Mouth>();
-			if (Mouth != null)
-			{
-				Destroy(Mouth);
-				return;
-			}
-			Shield Shield = GetComponent<Shield>();
-			if (Shield != null)
-			{
-				Destroy(Shield);
-				return;
-			}
-			Stomach Stomach = GetComponent<Stomach>();
-			if (Stomach != null)
-			{
-				Destroy(Stomach);
-				return;
-			}
-			Brain brain = GetComponent<Brain>();
-			if (brain != null)
-			{
-				Destroy(brain);
-				foreach (Organ child in brain.Organs)
+				Brain brain = (Brain)OrganScript;
+				foreach (GameObject child in brain.Organs)
 				{
 					child.GetComponent<Atributes>().CheckDeath();
 				}
-				return;
 			}
+			Destroy(OrganScript);
 		}
 	}
 	public bool CheckEnergy()
 	{
 		if (!isDead) return false;
-		//if Energy = 0 destroy this gameobject
 		if (UsedEnergie > 0) return false;
-		
+		//if Energy = 0 destroy this gameobject
 		Destroy(gameObject);
 		return true;
 	}

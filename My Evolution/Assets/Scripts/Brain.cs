@@ -1,45 +1,33 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
-using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
 public class Brain : MonoBehaviour
 {
 	[SerializeField] private GameManager GM;
-	public List<Organ> BirthOrgans { get; set; }
-	private List<Organ> organs;
-	public List<Organ> Organs 
-	{
-		get
-		{
-			return organs;
-		}
-		set
-		{
-			organs = value;
-		}
-	}
-	private List<GameObject> GameObjectOrgans;
-	private decimal AvailableEnergy;
-	private decimal NeededBirthEnergy;
-	private int ChiledCount;
-
-	
+	[SerializeField] private float GrowSpeed;
 	[SerializeField] private string AvailableEnergyn;
+	public List<Organ> BirthOrgans { get; set; }
+	public List<GameObject> Organs { get; set; }
+	private List<Organ> ChiledOrgans { get; set; }
+	private decimal AvailableEnergy;
+	private float NeededBirthEnergy;
+	private int ChiledCount;
+	private float growTime;
+
 
 	private void Start()
 	{
-		var d = new Organ("", Vector2.zero, 0, 0, new Brain(), new Atributes());
+		growTime = GrowSpeed;
 		SetBirthOrgans();
-		SetNeededBirthEnergy();
+		SetChiledOrgans();
 		CreateBody();
 		UpdateOrgans();
 	}
 	private void Update()
 	{
 		UpdateOrgans();
+		Grow();
 		ControlOrgans();
 		Birth();
 		AvailableEnergyn = AvailableEnergy.ToString();
@@ -56,26 +44,39 @@ public class Brain : MonoBehaviour
 			BirthOrgans.Add(GM.ToOrgan(currentOrgan.gameObject));
 		}
 	}
-	private void SetNeededBirthEnergy()
-	{
-		NeededBirthEnergy = 2;
-	}
 	private void CreateBody()
 	{
 		if (transform.childCount > 0) return;
 		foreach (Organ organ in BirthOrgans)
 		{
-			GM.ToGameObject(organ).transform.parent = transform;
+			GM.ToGameObject(organ, transform);
 		}
 	}
 	//Update
+	private void Grow()
+	{
+		if (growTime <= 0) return;
+		SetGrowTime();
+		float currentScale = GameManager.Remap(0, GrowSpeed, 0, 1, growTime);
+		transform.localScale = Vector3.one * currentScale;
+		if (growTime <= 0)
+		{
+			transform.localScale = Vector3.one;
+			growTime = 0;
+		}
+
+		void SetGrowTime()
+		{
+			growTime -= Time.deltaTime;
+		}
+	}
 	private void UpdateOrgans()
 	{
 		Organs = new();
 		foreach (Transform organ in transform)
 		{
 			if (!organ.CompareTag("Organ")) continue;
-			Organs.Add(GM.ToOrgan(organ.gameObject));
+			Organs.Add(organ.gameObject);
 		}
 	}
 	private void ControlOrgans()
@@ -89,16 +90,19 @@ public class Brain : MonoBehaviour
 			float xAxis = Input.GetAxisRaw("Horizontal");
 			float yAxis = Input.GetAxisRaw("Vertical");
 
-			foreach (Organ organ in GetOrgans("Foot"))
+			foreach (GameObject organ in GetOrgans("Foot"))
 			{
-				Foot foot1 = (Foot)organ.OrganScript;
+				Foot foot1 = organ.GetComponent<Foot>();
 				foot1.Walk(new Vector2(xAxis, yAxis));
 				foot1.Turn(TurnDir());
 			}
 			int TurnDir()
 			{
-				if (Input.GetKey(KeyCode.Alpha1)) return 1;
-				if (Input.GetKey(KeyCode.Alpha2)) return -1;
+				bool onePressed = Input.GetKey(KeyCode.Alpha1);
+				bool twoPressed = Input.GetKey(KeyCode.Alpha2);
+
+				if (onePressed && !twoPressed) return 1;
+				if (twoPressed && !onePressed) return -1;
 				return 0;
 			}
 		}
@@ -106,60 +110,70 @@ public class Brain : MonoBehaviour
 		{
 			if (Input.GetKeyDown(KeyCode.E))
 			{
-				foreach(Organ organ in GetOrgans("Mouth"))
+				foreach(GameObject organ in GetOrgans("Mouth"))
 				{
-					Mouth mouth = (Mouth)organ.OrganScript;
+					Mouth mouth = organ.GetComponent<Mouth>();
 					mouth.Bite();
 				}
 			}
 		}
 		void ControllEye()
 		{
-			foreach (Organ bodyPart in GetOrgans("Eye"))
+			foreach (GameObject organ in GetOrgans("Eye"))
 			{
-				//print(bodyPart.GetComponent<Eye>().Look().Count);
+				//print(organ.GetComponent<Eye>().Look().Count);
 			}
 		}
 	}
 	private void Birth()
 	{
-		if (AvailableEnergy < NeededBirthEnergy) return;
-		AvailableEnergy -= NeededBirthEnergy;
-
-		List<Vector2> freeOrganPlaces = FreeOrganPlaces();
+		if (AvailableEnergy < (decimal)NeededBirthEnergy) return;
+		AvailableEnergy -= (decimal)NeededBirthEnergy;
 
 		//Create chiled
-		Brain chiledBrain = Instantiate(GM.Brain, transform.position, transform.rotation).GetComponent<Brain>();
-		List<Organ> newOrganList = GM.CopyOrganList(BirthOrgans);
-		newOrganList = AddRemoveOrgan(newOrganList);
-
-		chiledBrain.BirthOrgans = newOrganList;
-
+		Egg egg = Instantiate(GM.Egg, transform.position, transform.rotation).GetComponent<Egg>();
+		egg.name = "Egg";
+		egg.BirthOrgans = ChiledOrgans;
 
 		ChiledCount++;
-
-		List<Organ> AddRemoveOrgan(List<Organ> inputList)
+		SetChiledOrgans();
+	}
+	//Funktions
+	private void SetChiledOrgans()
+	{
+		ChiledOrgans = GM.CopyOrganList(BirthOrgans);
+		List<Vector2> freeOrganPlaces = FreeOrganPlaces();
+		AddRemoveOrgan(ChiledOrgans);
+		SetNeededBirthEnergy(); 
+		
+		void SetNeededBirthEnergy()
+		{
+			NeededBirthEnergy = 0;
+			foreach (Organ organ in ChiledOrgans)
+			{
+				NeededBirthEnergy += GM.NeededEnergyDict[organ.Name] * (float)organ.Level;
+			}
+			Atributes brainAtributes = GetComponent<Atributes>();
+			NeededBirthEnergy += brainAtributes.NeededEnergy * (float)brainAtributes.Level;
+		}
+		void AddRemoveOrgan(List<Organ> inputList)
 		{
 			inputList.Add(AddOrgan());
-			return inputList;
-			
+
 			Organ AddOrgan()
 			{
 				string name = GM.AllOrganNames[UnityEngine.Random.Range(0, GM.AllOrganNames.Count - 1)];
 				Vector2 LocalPos = freeOrganPlaces[UnityEngine.Random.Range(0, freeOrganPlaces.Count - 1)];
 				int LocalRot = UnityEngine.Random.Range(0, 3) * 90;
-				object OrganScript = GM.AllOrganScriptsDict[name];
-				Organ newOrgan = new Organ(name, LocalPos, LocalRot, 0, OrganScript, new Atributes());
-	
+				Organ newOrgan = new(name, LocalPos, LocalRot, 0, GM, 0);
+
 				return newOrgan;
 			}
 		}
-
-		
 		List<Vector2> FreeOrganPlaces()
 		{
 			List<Vector2> output = new();
-			List<Vector2> organPosList = GetPos(Organs);
+			List<Vector2> organPosList = GetPos(BirthOrgans);
 
 			foreach (Vector2 organPos in organPosList)
 			{
@@ -208,18 +222,21 @@ public class Brain : MonoBehaviour
 			}
 		}
 	}
-	//Funktions
-	public void AddEnergy(decimal amount)
+	public void AddEnergy(ref decimal sorce, decimal amount)
 	{
+		if (amount <= 0) return;
+		if (sorce <= 0) return;
+		if (sorce < amount) amount = sorce;
 		AvailableEnergy += amount;
+		sorce -= amount;
 	}
-	public List<Organ> GetOrgans(string organName)
+	public List<GameObject> GetOrgans(string organName)
 	{
-		List<Organ> output = new();
+		List<GameObject> output = new();
 
-		foreach (Organ organ in Organs)
+		foreach (GameObject organ in Organs)
 		{
-			if (!organ.Name.Contains(organName)) continue;
+			if (!organ.name.Contains(organName)) continue;
 
 			output.Add(organ);
 		}

@@ -176,7 +176,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (9)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -191,6 +191,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -5988609595852689712, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
+      propertyPath: OrganScript
+      value: 
+      objectReference: {fileID: 1158403142}
     - target: {fileID: 7463031091012160424, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_RootOrder
       value: 9
@@ -237,7 +241,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (7)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -298,7 +302,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (8)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -313,25 +317,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1962479141}
     m_Modifications:
-    - target: {fileID: 1195390940059010244, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
-      propertyPath: m_AngularDrag
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1195390940059010244, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3633532752281699136, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3633532752281699136, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.23790944
+      value: -1.16
       objectReference: {fileID: 0}
     - target: {fileID: 3633532752281699136, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.028875941
+      value: 0.341
       objectReference: {fileID: 0}
     - target: {fileID: 3633532752281699136, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: m_LocalPosition.z
@@ -370,10 +366,6 @@ PrefabInstance:
       value: Brain
       objectReference: {fileID: 0}
     - target: {fileID: 3747956457418058881, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
-      propertyPath: GM
-      value: 
-      objectReference: {fileID: 11400000, guid: 02db969b505dd8e4f8d885ed751e767c, type: 2}
-    - target: {fileID: 3747956457418058881, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: GMobject
       value: 
       objectReference: {fileID: 0}
@@ -389,12 +381,7 @@ PrefabInstance:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 6911979140084448393, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
-      propertyPath: GM
-      value: 
-      objectReference: {fileID: 11400000, guid: 02db969b505dd8e4f8d885ed751e767c, type: 2}
-    m_RemovedComponents:
-    - {fileID: 624030474489367381, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
 --- !u!1 &519420028
 GameObject:
@@ -493,11 +480,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160424, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.67750883
+      value: 0.719
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160424, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.21509302
+      value: 0.21
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160424, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -533,7 +520,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (6)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -594,7 +581,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (1)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -773,7 +760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (3)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -834,7 +821,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (2)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -895,7 +882,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (10)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -956,7 +943,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (11)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -964,6 +951,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
+--- !u!114 &1158403142 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6838509617746356972, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
+  m_PrefabInstance: {fileID: 181363094}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5828398a9dd77434097d5cc54fdc397f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1165632140
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1017,7 +1015,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (4)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive
@@ -1083,7 +1081,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_Name
-      value: Ear (5)
+      value: Ear
       objectReference: {fileID: 0}
     - target: {fileID: 7463031091012160427, guid: a9cfc01a2d74a2744a50fcc1309034a8, type: 3}
       propertyPath: m_IsActive

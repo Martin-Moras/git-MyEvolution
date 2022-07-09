@@ -1,10 +1,9 @@
+using System;
 using UnityEngine;
 
 public class Mouth : MonoBehaviour
 {
 	[SerializeField] private GameManager GM;
-	public GameObject MouthObject { get; set; }
-	public Vector2 Location { get; set; }
 	public float MaxHealth { get; set; }
 	public float Damage { get; set; }
 
@@ -13,13 +12,6 @@ public class Mouth : MonoBehaviour
 	private float DigestTime;
 	[SerializeField] private string StoredFoodn;
 
-	public Mouth(GameObject mouthObject, Vector2 location, float maxHealth, float damage)
-	{
-		MouthObject = mouthObject;
-		Location = location;
-		MaxHealth = maxHealth;
-		Damage = damage;
-	}
 	public Mouth(){}
 	private void Start()
 	{
@@ -34,7 +26,7 @@ public class Mouth : MonoBehaviour
 	}
 	public void Bite()
 	{
-		Collider2D[] targets = Physics2D.OverlapBoxAll(transform.position + transform.right / 10, new Vector2(.1f, .1f), transform.rotation.z);
+		Collider2D[] targets = Physics2D.OverlapBoxAll(transform.position + transform.right / 10, new Vector2(.09f, .09f), transform.rotation.z);
 
 		foreach (Collider2D collider in targets)
 		{
@@ -43,7 +35,7 @@ public class Mouth : MonoBehaviour
 			if (colliderAtributes == null) continue;
 			if (!IseAnotherParent(collider)) continue;
 
-			StoredFood += colliderAtributes.DamageAndEat(Damage);
+			colliderAtributes.DamageAndEat(ref StoredFood, Convert.ToDecimal(Damage));
 
 			bool IseAnotherParent(Collider2D otherObject)
 			{
@@ -72,12 +64,13 @@ public class Mouth : MonoBehaviour
 			}
 		}
 	}
-	public decimal TakeFood(decimal amount)
+	public void TakeFood(ref decimal sorce, decimal amount)
 	{
-		if (amount > StoredFood) amount = StoredFood;
+		if (amount <= 0) return;
+		if (StoredFood < amount) amount = StoredFood;
 
 		StoredFood -= amount;
-		return amount;
+		sorce += amount;
 	}
 	private void Digest()
 	{
@@ -85,14 +78,10 @@ public class Mouth : MonoBehaviour
 		if (DigestTime > 0) return;
 		if (StoredFood <= 0) return;
 
-		decimal digestAmount = 1;
-
-		if (StoredFood < 1) digestAmount = StoredFood;
-		StoredFood -= digestAmount;
-
-		transform.parent.GetComponent<Brain>().AddEnergy(digestAmount);
-
 		DigestTime = DigestColdown;
+		decimal digestAmount = 1;
+		//give brain energy
+		transform.parent.GetComponent<Brain>().AddEnergy(ref StoredFood, digestAmount);
 	}
 	private void SetDigestTime()
 	{

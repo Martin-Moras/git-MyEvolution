@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EyeDetectetObject : MonoBehaviour
+public class EyeDetectetObject
 {
 	public GameObject DetectetObject { get; set; }
 	public float ObjectDistance { get; set; }
-	[SerializeField] private GameObject GM;
 
 	public EyeDetectetObject(GameObject detectetObject, float objectPos)
 	{
@@ -16,6 +15,7 @@ public class EyeDetectetObject : MonoBehaviour
 
 public class Eye : MonoBehaviour
 {
+	[SerializeField] private GameManager GM;
 	public float MaxHealth { get; set; }
 	public float LookDistance { get; set; }
 	public float ConsumedEnergy { get; set; }
@@ -38,7 +38,7 @@ public class Eye : MonoBehaviour
 		{
 			EyeDetectetObject detectetObject = new EyeDetectetObject(hit.transform.gameObject, hit.distance);
 
-			if (output.Find(x => x.DetectetObject == detectetObject) != null) continue;
+			if (output.Exists(x => x.DetectetObject == detectetObject.DetectetObject)) continue;
 
 			output.Add(detectetObject);
 		}
