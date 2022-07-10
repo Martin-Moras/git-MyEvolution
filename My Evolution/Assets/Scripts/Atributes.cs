@@ -4,19 +4,21 @@ using System;
 public class Atributes : MonoBehaviour
 {
 	[SerializeField] private GameManager GM;
+	[SerializeField] private GameObject EnergyCounters;
 	public UnityEngine.Object OrganScript;
 	public decimal Level = 1;
 	private decimal usedEnergy;
-	public decimal UsedEnergie 
+	public decimal UsedEnergy 
 	{
 		get { return usedEnergy; }
-		private set
+		set
 		{
 			if (value < 0) print("EROR!!!!!!!!!!!!!!");
-			CheckEnergy();
 			usedEnergy = value;
+			CheckEnergy();
 		}
 	}
+	public decimal Energy;
 	private float health;
 	private float Health
 	{
@@ -31,28 +33,37 @@ public class Atributes : MonoBehaviour
 			CheckDeath();
 		}
 	}
-	public float NeededEnergy { get; private set; }
-	private string StoredFoodn;
+	public decimal NeededEnergy 
+	{ 
+		get
+		{
+			GM.NeededEnergyDict.TryGetValue(gameObject.name, out float neededEnergy);
+			return (decimal)neededEnergy;
+		} 
+	}
+	private string UsedEnergyS;
 
 	private bool isDead = false;
 
 	private void Start()
 	{
+		EnergyCounters = GameObject.Find("Energy Counter");
 		SetAtributes();
 		if (gameObject.TryGetComponent(out Brain b)) GM.AddRb(gameObject);
 		CheckDeath();
 	} 
 	private void Update()
 	{
-		StoredFoodn = UsedEnergie.ToString();
+		UsedEnergyS = UsedEnergy.ToString();
+		EnergyCounters.GetComponent<EnergyCounter>().AllEnergy += Energy;
+		EnergyCounters.GetComponent<EnergyCounter>().AllUsedEnergy += UsedEnergy;
+
 	}
 
 	private void SetAtributes()
 	{
-		if (UsedEnergie == 0) UsedEnergie = 5;
+		if (CompareTag("Food")) UsedEnergy = 5;
 		if (Health == 0) Health = 2;
-		GM.NeededEnergyDict.TryGetValue(gameObject.name, out float neededEnergy);
-		NeededEnergy = neededEnergy;
 	}
 	public void DamageAndEat(ref decimal sorce, decimal amount)
 	{
@@ -71,9 +82,9 @@ public class Atributes : MonoBehaviour
 		void GetFoot(ref decimal sorce, decimal eatAmount)
 		{
 			if (eatAmount <= 0) return;
-			if (UsedEnergie < eatAmount) eatAmount = UsedEnergie;
+			if (UsedEnergy < eatAmount) eatAmount = UsedEnergy;
 			
-			UsedEnergie -= eatAmount;
+			UsedEnergy -= eatAmount;
 			sorce += eatAmount;
 		}
 	}
@@ -92,9 +103,33 @@ public class Atributes : MonoBehaviour
 		if (healAmount <= 0) return;
 		Health += healAmount;
 	}
+	public void SetUsedEnergy(ref decimal sorce, decimal amount)
+	{
+		if (amount <= 0) return;
+		if (sorce <= 0) return;
+		if (sorce < amount) amount = sorce;
+		UsedEnergy += amount;
+		sorce -= amount;
+	}
+	public void GiveOrganEnergy(ref decimal sorce, decimal amount)
+	{
+		if (amount <= 0) return;
+		if (sorce <= 0) return;
+		if (sorce < amount) amount = sorce;
+		Energy += amount;
+		sorce -= amount;
+	}
+	public void TakeFood(ref decimal sorce, decimal amount)
+	{
+		if (amount <= 0) return;
+		if (Energy < amount) amount = Energy;
+
+		Energy -= amount;
+		sorce += amount;
+	}
 	public void CheckDeath()
 	{
-		if (transform.parent == null && transform.CompareTag("Organ")) Health = 0;
+		if (transform.parent == null && !transform.CompareTag("Brain") && !transform.CompareTag("Egg")) Health = 0;
 		if (Health > 0) return;
 		if (CheckEnergy()) return;
 		if (isDead) return;
@@ -103,10 +138,13 @@ public class Atributes : MonoBehaviour
 		transform.DetachChildren();
 		if (transform.parent != null) transform.SetParent(null);
 		GM.AddRb(gameObject);
+		UsedEnergy += Energy;
+		Energy = 0;
 		RemoveOrganScript();
 		
 		void RemoveOrganScript()
 		{
+			if (OrganScript == null) return;
 			if (OrganScript.name == "Brain")
 			{
 				Brain brain = (Brain)OrganScript;
@@ -121,8 +159,9 @@ public class Atributes : MonoBehaviour
 	public bool CheckEnergy()
 	{
 		if (!isDead) return false;
-		if (UsedEnergie > 0) return false;
+		if (usedEnergy > 0) return false;
 		//if Energy = 0 destroy this gameobject
+		transform.DetachChildren();
 		Destroy(gameObject);
 		return true;
 	}

@@ -28,7 +28,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7212910387707076604}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.4284458, y: 0.07360986, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -126,6 +126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GM: {fileID: 11400000, guid: 02db969b505dd8e4f8d885ed751e767c, type: 2}
+  EnergyCounters: {fileID: 0}
   OrganScript: {fileID: -3063570766892782123}
 --- !u!114 &-3063570766892782123
 MonoBehaviour:
@@ -140,4 +141,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GM: {fileID: 11400000, guid: 02db969b505dd8e4f8d885ed751e767c, type: 2}
-  CrackSpeed: 10
+  CrackSpeed: 2

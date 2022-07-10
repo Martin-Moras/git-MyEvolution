@@ -113,9 +113,12 @@ public class GameManager : ScriptableObject
 	public GameObject ToGameObject(Organ inputOrgan, Transform parent)
 	{
 		GameObject outputOrgan = Instantiate(AllOrgansDict[inputOrgan.Name], parent);
+		Atributes atributes = outputOrgan.GetComponent<Atributes>();
 		outputOrgan.name = inputOrgan.Name;
 		outputOrgan.transform.localPosition = inputOrgan.LocalPos;
 		outputOrgan.transform.localRotation = Quaternion.Euler(0, 0, inputOrgan.LocalRot);
+		atributes.Level = inputOrgan.Level;
+		atributes.UsedEnergy = inputOrgan.UsedEnergy;
 
 		return outputOrgan;
 	}
@@ -124,9 +127,21 @@ public class GameManager : ScriptableObject
 		List<Organ> output = new();
 		foreach (Organ inputOrgan in input)
 		{
-			output.Add(inputOrgan.Clone());
+			output.Add(inputOrgan.Copy());
 		}
 		return output;
+	}
+	public GameObject CreateGameobject(Organ organ, Transform parent, ref decimal energySorce, Vector2 pos, Quaternion rot)
+	{
+		GameObject obj = Instantiate(AllOrgansDict[organ.Name], parent);
+		obj.name = organ.Name;
+		obj.transform.localPosition = pos;
+		obj.transform.localRotation = rot;
+		Atributes atributes = obj.GetComponent<Atributes>();
+		atributes.Level = organ.Level;
+		atributes.SetUsedEnergy(ref energySorce, atributes.NeededEnergy);
+		
+		return obj;
 	}
 	//Rigidbody
 	public Rigidbody2D AddRb(GameObject input)

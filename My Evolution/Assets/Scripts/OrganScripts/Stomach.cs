@@ -5,7 +5,7 @@ public class Stomach : MonoBehaviour
 {
 	[SerializeField] private GameManager GM;
 	private decimal FoodStorageSize;
-	private decimal StoredFood;
+	private Atributes Atrib { get { return GetComponent<Atributes>(); } }
 	private float DigestColdown;
 	private float DigestTime;
 	[SerializeField] string StoredFoodn;
@@ -21,7 +21,7 @@ public class Stomach : MonoBehaviour
 	{
 		GetFood();
 		Digest();
-		StoredFoodn = StoredFood.ToString();
+		StoredFoodn = Atrib.Energy.ToString();
 	}
 	private void GetFood()
 	{
@@ -34,18 +34,18 @@ public class Stomach : MonoBehaviour
 			if (mouth == null) continue;
 
 			decimal amount = .1m;
-			mouth.TakeFood(ref StoredFood, amount);
+			mouth.TakeFood(ref Atrib.Energy, amount);
 		}
 	}
 	private void Digest()
 	{
 		SetDigestTime();
 		if (DigestTime > 0) return;
-		if (StoredFood <= 0) return;
+		if (Atrib.Energy <= 0) return;
 
 		DigestTime = DigestColdown;
 		decimal digestAmount = .1m;
-		transform.parent.GetComponent<Brain>().AddEnergy(ref StoredFood, digestAmount);
+		transform.parent.GetComponent<Brain>().GiveEnergy(ref Atrib.Energy, digestAmount);
 	}
 	private void SetDigestTime()
 	{

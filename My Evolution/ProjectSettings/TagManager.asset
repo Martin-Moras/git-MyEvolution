@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Organ
   - Brain
+  - Egg
+  - Food
   layers:
   - Default
   - TransparentFX

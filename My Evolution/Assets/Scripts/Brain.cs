@@ -10,8 +10,8 @@ public class Brain : MonoBehaviour
 	public List<Organ> BirthOrgans { get; set; }
 	public List<GameObject> Organs { get; set; }
 	private List<Organ> ChiledOrgans { get; set; }
-	private decimal AvailableEnergy;
-	private float NeededBirthEnergy;
+	private Atributes Atrib { get { return GetComponent<Atributes>(); } }
+	private decimal NeededBirthEnergy;
 	private int ChiledCount;
 	private float growTime;
 
@@ -21,7 +21,7 @@ public class Brain : MonoBehaviour
 		growTime = GrowSpeed;
 		SetBirthOrgans();
 		SetChiledOrgans();
-		CreateBody();
+		//CreateBody();
 		UpdateOrgans();
 	}
 	private void Update()
@@ -30,7 +30,7 @@ public class Brain : MonoBehaviour
 		Grow();
 		ControlOrgans();
 		Birth();
-		AvailableEnergyn = AvailableEnergy.ToString();
+		AvailableEnergyn = Atrib.Energy.ToString();
 	}
 	//Start
 	private void SetBirthOrgans()
@@ -38,17 +38,19 @@ public class Brain : MonoBehaviour
 		if (BirthOrgans != null) return;
 
 		BirthOrgans = new();
-		foreach (Transform currentOrgan in transform)
+		foreach (Transform currOrgan in transform)
 		{
-			if (!currentOrgan.CompareTag("Organ")) continue;
-			BirthOrgans.Add(GM.ToOrgan(currentOrgan.gameObject));
+			if (!currOrgan.CompareTag("Organ")) continue;
+			BirthOrgans.Add(GM.ToOrgan(currOrgan.gameObject));
 		}
+		BirthOrgans.Add(GM.ToOrgan(gameObject));
 	}
 	private void CreateBody()
 	{
 		if (transform.childCount > 0) return;
 		foreach (Organ organ in BirthOrgans)
 		{
+			if (organ.Name != "Brain") continue;
 			GM.ToGameObject(organ, transform);
 		}
 	}
@@ -127,13 +129,13 @@ public class Brain : MonoBehaviour
 	}
 	private void Birth()
 	{
-		if (AvailableEnergy < (decimal)NeededBirthEnergy) return;
-		AvailableEnergy -= (decimal)NeededBirthEnergy;
+		if (Atrib.Energy < NeededBirthEnergy) return;
 
 		//Create chiled
 		Egg egg = Instantiate(GM.Egg, transform.position, transform.rotation).GetComponent<Egg>();
 		egg.name = "Egg";
 		egg.BirthOrgans = ChiledOrgans;
+		egg.GiveEnergy(ref Atrib.Energy, NeededBirthEnergy);
 
 		ChiledCount++;
 		SetChiledOrgans();
@@ -151,10 +153,8 @@ public class Brain : MonoBehaviour
 			NeededBirthEnergy = 0;
 			foreach (Organ organ in ChiledOrgans)
 			{
-				NeededBirthEnergy += GM.NeededEnergyDict[organ.Name] * (float)organ.Level;
+				NeededBirthEnergy += (decimal)GM.NeededEnergyDict[organ.Name] * organ.Level;
 			}
-			Atributes brainAtributes = GetComponent<Atributes>();
-			NeededBirthEnergy += brainAtributes.NeededEnergy * (float)brainAtributes.Level;
 		}
 		void AddRemoveOrgan(List<Organ> inputList)
 		{
@@ -217,17 +217,16 @@ public class Brain : MonoBehaviour
 				{
 					output.Add(organ.LocalPos);
 				}
-				output.Add(new Vector2(0, 0));
 				return output;
 			}
 		}
 	}
-	public void AddEnergy(ref decimal sorce, decimal amount)
+	public void GiveEnergy(ref decimal sorce, decimal amount)
 	{
 		if (amount <= 0) return;
 		if (sorce <= 0) return;
 		if (sorce < amount) amount = sorce;
-		AvailableEnergy += amount;
+		Atrib.Energy += amount;
 		sorce -= amount;
 	}
 	public List<GameObject> GetOrgans(string organName)
