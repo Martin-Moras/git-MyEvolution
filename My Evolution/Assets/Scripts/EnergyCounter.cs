@@ -17,8 +17,10 @@ public class EnergyCounter : MonoBehaviour
         //print(AllUsedEnergy);
         AllEnergyS = AllEnergy.ToString();
         AllUsedEnergyS = AllUsedEnergy.ToString();
+       
         TotalEnergy = AllEnergy + AllUsedEnergy;
         TotalEnergyS = TotalEnergy.ToString();
+        
         AllEnergy = 0;
         AllUsedEnergy = 0;
     }
