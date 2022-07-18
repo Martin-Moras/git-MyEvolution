@@ -1,18 +1,20 @@
 public class Neuron
 {
-	private int Id;
-	private string Type;
-	private int Layer;
-	private int outputWeightId;
-	private float inputVal;
-	private float outputVal;
+	public NeuralNetwork MyNetwork;
 
-	void Start()
+	public int Id { get; private set; }
+	public string Type;
+	public int Layer { get; private set; }
+	
+	public float InVal { get; set; }
+	public float OutVal { get; set; }
+	public float Bias;
+
+	public Neuron (NeuralNetwork myNetwork, int id, string type, int layer)
 	{
-		
-	}
-	void Update()
-	{
-		
+		MyNetwork = myNetwork;
+		Id = id;
+		Type = type;
+		Layer = layer;
 	}
 }

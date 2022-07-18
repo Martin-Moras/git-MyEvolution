@@ -1,18 +1,20 @@
 public class Weight
 {
-    private int Id;
-    private int InputNeuronId;
-    private int OutputNeuronId;
-    private float WeightValue;
-    private bool IsEnabled;
-    private bool IsRecurrent;
+	public NeuralNetwork MyNetwork;
 
-    void Start()
-    {
-        
-    }
-    void Update()
-    {
-        
-    }
+	public int Id;
+	public int InNeuronId;
+	public int OutNeuronId;
+	public float WeightValue;
+	public float InVal { get; set; }
+	public float OutVal { get;  set; }
+	public bool IsEnabled;
+	public bool IsRecurrent;
+
+	public Weight(int id, int inNeuronId, int outNeuronId)
+	{
+		Id = id;
+		InNeuronId = inNeuronId;
+		OutNeuronId = outNeuronId;
+	}
 }
