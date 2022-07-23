@@ -1,18 +1,16 @@
+
+[System.Serializable]
 public class Neuron
 {
-	public NeuralNetwork MyNetwork;
-
-	public int Id { get; private set; }
-	public string Type;
-	public int Layer { get; private set; }
+	public int Id { get; set; }
+	public int Type;// 0 = Input; 1 = Hidden; 2 = Output; 3 = Bias;
+	public int Layer { get; set; }
 	
 	public float InVal { get; set; }
 	public float OutVal { get; set; }
-	public float Bias;
 
-	public Neuron (NeuralNetwork myNetwork, int id, string type, int layer)
+	public Neuron (int id, int type, int layer)
 	{
-		MyNetwork = myNetwork;
 		Id = id;
 		Type = type;
 		Layer = layer;

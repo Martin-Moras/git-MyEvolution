@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3633532752281699138}
   - component: {fileID: 3747956457418058881}
   - component: {fileID: 6911979140084448393}
+  - component: {fileID: 4287322651127037333}
   m_Layer: 0
   m_Name: Brain
   m_TagString: Brain
@@ -31,7 +32,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 6941899283264760013}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -142,3 +144,104 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GM: {fileID: 11400000, guid: 02db969b505dd8e4f8d885ed751e767c, type: 2}
   OrganScript: {fileID: 3747956457418058881}
+--- !u!114 &4287322651127037333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3633532752281699197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f80e57d47659e564bbcb7e871e6f6e29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  VisualNetwork: {fileID: 2948875553943664997}
+  InputNeuronAmount: 3
+  HiddenNeuronAmount: 2
+  OutputNeuronAmount: 5
+  ConnectionPersentige: 7
+  InputNeurons: []
+  HiddenNeurons: []
+  OutputNeurons: []
+--- !u!1001 &1728814546252065866
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 3633532752281699136}
+    m_Modifications:
+    - target: {fileID: -4678825381925169873, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: Network
+      value: 
+      objectReference: {fileID: 4287322651127037333}
+    - target: {fileID: -4678825381925169873, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: NeuronDistance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1805740085745798053, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_Name
+      value: NeuralNetwork Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.6891631
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.11925393
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -9.91327
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+--- !u!114 &2948875553943664997 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: -4678825381925169873, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+  m_PrefabInstance: {fileID: 1728814546252065866}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64b31f7fbcee29847835f4a87ff60741, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &6941899283264760013 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8623108188216558727, guid: 113c219a59b712b46bdad66aeedf0f38, type: 3}
+  m_PrefabInstance: {fileID: 1728814546252065866}
+  m_PrefabAsset: {fileID: 0}

@@ -4,7 +4,6 @@ using System;
 public class Atributes : MonoBehaviour
 {
 	[SerializeField] private GameManager GM;
-	[SerializeField] private GameObject EnergyCounters;
 	public UnityEngine.Object OrganScript;
 	public decimal Level = 1;
 	private decimal usedEnergy;
@@ -47,7 +46,7 @@ public class Atributes : MonoBehaviour
 
 	private void Start()
 	{
-		EnergyCounters = GameObject.Find("Energy Counter");
+		//EnergyCounters = GameObject.Find("Energy Counter");
 		SetAtributes();
 		if (gameObject.TryGetComponent(out Brain b)) GM.AddRb(gameObject);
 		CheckDeath();
@@ -55,8 +54,8 @@ public class Atributes : MonoBehaviour
 	private void Update()
 	{
 		UsedEnergyS = UsedEnergy.ToString();
-		EnergyCounters.GetComponent<EnergyCounter>().AllEnergy += Energy;
-		EnergyCounters.GetComponent<EnergyCounter>().AllUsedEnergy += UsedEnergy;
+		//EnergyCounters.GetComponent<EnergyCounter>().AllEnergy += Energy;
+		//EnergyCounters.GetComponent<EnergyCounter>().AllUsedEnergy += UsedEnergy;
 
 	}
 

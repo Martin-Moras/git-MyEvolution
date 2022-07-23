@@ -126,7 +126,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GM: {fileID: 11400000, guid: 02db969b505dd8e4f8d885ed751e767c, type: 2}
-  EnergyCounters: {fileID: 0}
   OrganScript: {fileID: -3063570766892782123}
 --- !u!114 &-3063570766892782123
 MonoBehaviour:

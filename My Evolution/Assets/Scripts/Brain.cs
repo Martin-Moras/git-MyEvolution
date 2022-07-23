@@ -5,12 +5,15 @@ using System.Collections.Generic;
 public class Brain : MonoBehaviour
 {
 	[SerializeField] private GameManager GM;
+	private Atributes Atrib { get { return GetComponent<Atributes>(); } }
+
 	[SerializeField] private float GrowSpeed;
 	[SerializeField] private string AvailableEnergyn;
+
 	public List<Organ> BirthOrgans { get; set; }
 	public List<GameObject> Organs { get; set; }
 	private List<Organ> ChiledOrgans { get; set; }
-	private Atributes Atrib { get { return GetComponent<Atributes>(); } }
+
 	private decimal NeededBirthEnergy;
 	private int ChiledCount;
 	private float growTime;
