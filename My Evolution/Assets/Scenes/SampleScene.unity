@@ -187,9 +187,13 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1962479141}
     m_Modifications:
+    - target: {fileID: 1077130664336041967, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2948875553943664997, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: NeuronDistance
-      value: 1
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 3633532752281699136, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: m_RootOrder
@@ -252,16 +256,32 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4287322651127037333, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+      propertyPath: mutate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287322651127037333, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+      propertyPath: AddNeuronChance
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287322651127037333, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+      propertyPath: AddWeightChance
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287322651127037333, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: InputNeuronAmount
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4287322651127037333, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: HiddenNeuronAmount
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4287322651127037333, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: OutputNeuronAmount
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4287322651127037333, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+      propertyPath: WeightConnectionPersentige
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 4829873285132012183, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: m_RootOrder
@@ -270,6 +290,18 @@ PrefabInstance:
     - target: {fileID: 6941899283264760013, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
       propertyPath: m_RootOrder
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6941899283264760013, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 6941899283264760013, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6941899283264760013, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
