@@ -1,34 +1,31 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
 
 public class NeuralNetwork : MonoBehaviour
 {
+	#region Variablen
 	[SerializeField] private VisBase VisualNetwork;
-
+	
 	[SerializeField] public int InputNeuronAmount;
-	[SerializeField] private int HiddenNeuronAmount;
-	[SerializeField] private int OutputNeuronAmount;
-	[SerializeField] private float WeightConnectionPersentige = 25;
+	[SerializeField] public int HiddenNeuronAmount;
+	[SerializeField] public int OutputNeuronAmount;
+	[SerializeField] public float WeightConnectionPersentige = 25;
 
-	[SerializeField] private bool mutate;
-	[SerializeField] private int removeWeightId;
-	[SerializeField] private bool removeA_Weight;
-	[SerializeField] private int removeNeuronId;
-	[SerializeField] private bool removeA_Neuron;
-
+	public float AddWeightChance = 25;
+	public float RemoveWeightChance = 5;
+	public float DisableWeightChance = 5;
+	#region Change weight
 	public float WeightMutationCance = 80;
 	public float WeightResetCance = 10;
 	public float WeightChangeAmount = 20;
-	public float AddWeightChance = 5;
-	public float WeightCrationAttempts = 20;
-	public float WeightRactivateChance = 25;
-	public bool AllowRecurentConnections = true;
-	
+	public int WeightCrationAttempts = 20;
+	public float WeightReactivateChance = 25;
+	public bool AllowRecurentWeights = true;
+	#endregion
 	public float AddNeuronChance = 25;
+	public float RemoveNeuronChance = 5;
+	public float ChangeActivationFunkChance = 5;
 
 	public List<Neuron> InputNeurons { get; private set; } = new();// 0 = Input;
 	public List<Neuron> HiddenNeurons { get; private set; } = new();// 1 = Hidden;
@@ -38,50 +35,29 @@ public class NeuralNetwork : MonoBehaviour
 	public List<Weight> AllWeights = new();
 
 	private int currNeuronId = 0;
-
+	#endregion
 	private void Start()
 	{
 		Initialise();
 		VisualNetwork.Draw();
 	}
-	private void Update()
+	
+	public void RemoveNeuron_withId(int id)
 	{
-		CheckMutate();
-		CheckRemoveWeightOrNeuron();
+		Neuron neuronToRemove = AllNeurons.Find(x => x.Id == id);
+		RemoveNeuronOrWeight(neuronToRemove);
 	}
-	void CheckMutate()
+	public void RemoveWeight_withId(int id)
 	{
-		if (!mutate) return;
-		mutate = false;
-		Mutate();
-	}
-	void CheckRemoveWeightOrNeuron()
-	{
-		RemoveNeu();
-		RemoveWeigh();
-		void RemoveNeu()
-		{
-			if (!removeA_Neuron) return;
-			removeA_Neuron = false;
-			Neuron neuron = AllNeurons.Find(x => x.Id == removeNeuronId);
-			if (neuron == null) return;
-			RemoveNeuronOrWeight(neuron);
-		}
-		void RemoveWeigh()
-		{
-			if (!removeA_Weight) return;
-			removeA_Weight = false;
-			Weight weight = AllWeights.Find(x => x.Id == removeWeightId);
-			if (weight == null) return;
-			RemoveNeuronOrWeight(weight);
-		}
-		
+		Weight weightToRemove = AllWeights.Find(x => x.Id == id);
+		RemoveNeuronOrWeight(weightToRemove);
 	}
 
 	void Initialise()
 	{
 		InitialiseNeurons();
 		InitialiseWeights();
+		UpdateLayersAndWeights();
 
 		void InitialiseNeurons()
 		{
@@ -95,7 +71,14 @@ public class NeuralNetwork : MonoBehaviour
 				{
 					CreateNeuron(neuronType, layer);
 				}
-				UpdateOutput_Layer();
+				if (neuronType != 1) return;
+
+				foreach (Neuron hiddenNeuron in HiddenNeurons)
+				{
+					Neuron inNeuron = InputNeurons[Random.Range(0, InputNeurons.Count - 1)];
+
+					CreateWeight(inNeuron, hiddenNeuron, false, false);
+				}
 			}
 		}
 		void InitialiseWeights()
@@ -118,7 +101,6 @@ public class NeuralNetwork : MonoBehaviour
 						CreateWeight(inputNeuron, outputNeuron, true, true);
 					}
 				}
-				UpdateLayersAndWeights();
 			}
 		}
 	}
@@ -128,6 +110,11 @@ public class NeuralNetwork : MonoBehaviour
 		ReanableWeight();
 		AddWeight();
 		AddHiddenNeuron();
+		RemoveRandomWeight();
+		RemoveRandomNeuron();
+		DisableRandomWeight();
+		
+		UpdateLayersAndWeights();
 		VisualNetwork.UpdateAll();
 
 		void MutateWeightValue()
@@ -145,10 +132,10 @@ public class NeuralNetwork : MonoBehaviour
 					weight.WeightVal %= Random.Range(-WeightChangeAmount, WeightChangeAmount);
 				}
 			}
-		}
+		} 
 		void ReanableWeight()
 		{
-			if (!RandomPers(WeightRactivateChance)) return;
+			if (!RandomPers(WeightReactivateChance)) return;
 
 			List<Weight> disabledWeights = DisabledWeights();
 			if (disabledWeights.Count == 0) return;
@@ -183,11 +170,54 @@ public class NeuralNetwork : MonoBehaviour
 					return AllNeurons[Random.Range(0, AllNeurons.Count - 1)];
 				}
 			}
-			UpdateLayersAndWeights();
 		}
 		void RemoveRandomWeight()
 		{
+			if (!RandomPers(RemoveWeightChance)) return;
 
+			RemoveNeuronOrWeight(RandomWeight());
+
+			Weight RandomWeight()
+			{
+				if (AllWeights.Count == 0) return null;
+				for (int i = 0; i < AllWeights.Count; i++)
+				{
+					return AllWeights[Random.Range(0, AllWeights.Count - 1)];
+				}
+				return null;
+			}
+		}
+		void DisableRandomWeight()
+		{
+			if (!RandomPers(DisableWeightChance)) return;
+
+			RandomWeight().IsActivaded = false;
+
+			Weight RandomWeight()
+			{
+				if (AllWeights.Count == 0) return null;
+				for (int i = 0; i < AllWeights.Count; i++)
+				{
+					return AllWeights[Random.Range(0, AllWeights.Count - 1)];
+				}
+				return null;
+			}
+		}
+		void RemoveRandomNeuron()
+		{
+			if (!RandomPers(RemoveNeuronChance)) return;
+
+			RemoveNeuronOrWeight(RandomNeuron());
+
+			Neuron RandomNeuron()
+			{
+				if (AllNeurons.Count == 0) return null;
+				for (int i = 0; i < AllNeurons.Count; i++)
+				{
+					return AllNeurons[Random.Range(0, AllNeurons.Count - 1)];
+				}
+				return null;
+			}
 		}
 		void AddHiddenNeuron()
 		{
@@ -199,12 +229,11 @@ public class NeuralNetwork : MonoBehaviour
 
 			Neuron newNeuron = CreateNewNeuron();
 			ConectNewWeightsTo_NewNeuron();
-			UpdateLayersAndWeights();
 
 			Weight RandomWeight()
 			{
 				if (AllWeights.Count == 0) return null;
-				for	(int i = 0; i < 100; i++)
+				for	(int i = 0; i < AllWeights.Count; i++)
 				{
 					Weight output = AllWeights[Random.Range(0, AllWeights.Count - 1)];
 					if (output.IsRecurrent) continue;
@@ -221,10 +250,35 @@ public class NeuralNetwork : MonoBehaviour
 			}
 			void ConectNewWeightsTo_NewNeuron()
 			{
-				Weight weight1 = CreateWeight(newNeuron, AllNeurons.Find(x => x.Id == randWeight.OutId), false, false);
-				weight1.WeightVal = randWeight.WeightVal;
-				Weight weight = CreateWeight(AllNeurons.Find(x => x.Id == randWeight.InId), newNeuron, false, false);
+				Weight inWeight = CreateWeight(AllNeurons.Find(x => x.Id == randWeight.InId), newNeuron, false, false);
+				Weight outWeight = CreateWeight(newNeuron, AllNeurons.Find(x => x.Id == randWeight.OutId), false, false);
+				outWeight.WeightVal = randWeight.WeightVal;
 			}
+		}
+		void ChangeNeuronFunktion()
+		{
+			if (!RandomPers(ChangeActivationFunkChance)) return;
+			RandomNeuron().ChangeActivationFunk();
+
+			Neuron RandomNeuron()
+			{
+				if (AllNeurons.Count == 0) return null;
+				for (int i = 0; i < AllNeurons.Count; i++)
+				{
+					return AllNeurons[Random.Range(0, AllNeurons.Count - 1)];
+				}
+				return null;
+			}
+			/*sigmioid
+			 linear
+			sqr
+			sin
+			absolute
+			relucant(0 if < 0)
+			gaussian
+			latch(memory)
+			/////all output neurons are sigmoid
+			*/
 		}
 	}
 	void LoadInputs(Neuron[] inputNeurons)
@@ -304,7 +358,7 @@ public class NeuralNetwork : MonoBehaviour
 				if (IsSameLayer()) return false;
 
 			if (checkRecurent)
-				if (IsRecurrent() && !AllowRecurentConnections) return false;
+				if (IsRecurrent() && !AllowRecurentWeights) return false;
 
 			return true;
 
@@ -418,7 +472,7 @@ public class NeuralNetwork : MonoBehaviour
 				Neuron inNeuron = AllNeurons.Find(x => x.Id == currWeight.InId);
 				Neuron outNeuron = AllNeurons.Find(x => x.Id == currWeight.OutId);
 
-				if (IsRecurent() && !AllowRecurentConnections)
+				if (IsRecurent() && !AllowRecurentWeights)
 				{
 					currWeight.IsActivaded = false;
 				}
@@ -556,30 +610,3 @@ public class NeuralNetwork : MonoBehaviour
 		}
 	}
 }
-#if UNITY_EDITOR
-[CustomEditor(typeof(NeuralNetwork))]
-class NeuralNetworkEditor : Editor
-{
-	public override void OnInspectorGUI()
-	{
-		NeuralNetwork neuralNetwork = (NeuralNetwork)target;
-		if (neuralNetwork == null) return;
-		Undo.RecordObject(neuralNetwork, "Change NeuralNetwork");
-
-		EditorGUILayout.BeginHorizontal();
-		if (GUILayout.Button("Mutate"))
-		{
-			neuralNetwork.Mutate();
-		}
-
-		if (GUILayout.Button("Remove Weight"))
-		{
-			neuralNetwork.Mutate();
-		}
-		EditorGUILayout.EndHorizontal();
-
-	}
-}
-//base.OnInspectorGUI();
-//DrawDefaultInspector();
-#endif

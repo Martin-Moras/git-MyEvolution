@@ -16,6 +16,7 @@ public class GameManager : ScriptableObject
 	public GameObject Brain;
 	
 	public GameObject Egg;
+	public GameObject Organism;
 
 	[SerializeField] private float Ear_NeededEnergy;
 	[SerializeField] private float Eye_NeededEnergy;
@@ -142,6 +143,18 @@ public class GameManager : ScriptableObject
 		atributes.SetUsedEnergy(ref energySorce, atributes.NeededEnergy);
 		
 		return obj;
+	}
+	public GameObject CreateOrganism(Organ organ, Transform parent, ref decimal energySorce, Vector2 pos, Quaternion rot)
+	{
+		GameObject organism = Instantiate(Organism, parent);
+		organism.name = organ.Name;
+		organism.transform.localPosition = pos;
+		organism.transform.localRotation = rot;
+		Atributes atributes = organism.GetComponent<Atributes>();
+		atributes.Level = organ.Level;
+		atributes.SetUsedEnergy(ref energySorce, atributes.NeededEnergy);
+		
+		return organism;
 	}
 	//Rigidbody
 	public Rigidbody2D AddRb(GameObject input)

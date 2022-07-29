@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Activated: {r: 0, g: 1, b: 0.04313922, a: 1}
-  Deactivated: {r: 1, g: 0, b: 0.13757896, a: 0}
+  Deactivated: {r: 1, g: 0, b: 0.13757896, a: 0.2901961}
   Recurent: {r: 0, g: 0.53073, b: 1, a: 1}
   Id: 0
   InId: 0

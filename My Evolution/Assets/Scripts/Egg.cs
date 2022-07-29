@@ -34,23 +34,33 @@ public class Egg : MonoBehaviour
 		CreateOrgans();
 
 		//Destroy(gameObject);
-		Atrib.Damage(9999);
-		Atrib.CheckDeath();
+		Atrib.Kill();
 	}
 	private void CreateOrgans()
 	{
-		//Create brain
-		Organ brainOrgan = BirthOrgans.Find(x => x.Name == "Brain");
-		GameObject brainObject = GM.CreateGameobject(brainOrgan, null, ref Atrib.Energy, transform.position, transform.rotation);
-		Brain brain = brainObject.GetComponent<Brain>();
-		brain.BirthOrgans = BirthOrgans;
+		Organ brainOrgan;
+		GameObject brainObject;
+		Brain brainScript;
 
-		foreach (Organ organ in BirthOrgans)
+		void CreateOrganism()
 		{
-			if (organ == brainOrgan) continue;
 
-			GM.CreateGameobject(organ, brainObject.transform, ref Atrib.Energy, organ.LocalPos, Quaternion.Euler(0, 0, organ.LocalRot));
+
+			brainOrgan = BirthOrgans.Find(x => x.Name == "Brain");
+			brainObject = GM.CreateGameobject(brainOrgan, null, ref Atrib.Energy, transform.position, transform.rotation);
+			brainScript = brainObject.GetComponent<Brain>();
+			brainScript.BirthOrgans = BirthOrgans;
 		}
+		void CreateOrgans()
+		{
+			foreach (Organ organ in BirthOrgans)
+			{
+				if (organ == brainOrgan) continue;
+
+				GM.CreateGameobject(organ, brainObject.transform, ref Atrib.Energy, organ.LocalPos, Quaternion.Euler(0, 0, organ.LocalRot));
+			}
+		}
+		
 	}
 	private void SetSize()
 	{

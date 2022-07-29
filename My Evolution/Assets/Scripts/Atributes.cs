@@ -97,6 +97,10 @@ public class Atributes : MonoBehaviour
 		
 		CheckDeath();
 	}
+	public void Kill()
+	{
+		Health = 0;
+	}
 	public void Heal(float healAmount)
 	{
 		if (healAmount <= 0) return;

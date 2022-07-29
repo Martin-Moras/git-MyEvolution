@@ -19,7 +19,7 @@ MonoBehaviour:
   Mouth: {fileID: 3223810703643453681, guid: 338a4ee2d3339954487a3f832d14bf82, type: 3}
   Shield: {fileID: 5986168849310010283, guid: c891b2b9678b12544aa7c9707090695d, type: 3}
   Stomach: {fileID: 3331493411099893253, guid: 3a73e26cc893e464795ef9f80b0734b6, type: 3}
-  Brain: {fileID: 3633532752281699197, guid: 3dd1198c9fbc9c44da2307c83c54e039, type: 3}
+  Brain: {fileID: 1010751442758961323, guid: c6868614c83ea954fa1d028e59a87669, type: 3}
   Egg: {fileID: 7212910387707076604, guid: c4182fa9b353aab49a329f8071272c1a, type: 3}
   Ear_NeededEnergy: 0.5
   Eye_NeededEnergy: 0.5

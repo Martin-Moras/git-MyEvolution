@@ -36,6 +36,10 @@ public class Brain : MonoBehaviour
 		AvailableEnergyn = Atrib.Energy.ToString();
 	}
 	//Start
+	private void InitialiseNeuralNetwork()
+	{
+
+	}
 	private void SetBirthOrgans()
 	{
 		if (BirthOrgans != null) return;

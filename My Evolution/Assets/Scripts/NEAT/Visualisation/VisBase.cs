@@ -38,7 +38,7 @@ public class VisBase : MonoBehaviour
 	public void Draw()
 	{
 		CreateLayers();
-		CreateNeurons(Network.AllNeurons);
+		CreateNeurons();
 		CreateWeights();
 
 		void CreateLayers()
@@ -68,15 +68,16 @@ public class VisBase : MonoBehaviour
 				return hiddenLayers.Count;
 			}
 		}
-		void CreateNeurons(List<Neuron> neurons)
+		void CreateNeurons()
 		{
-			if (neurons.Count == 0) return;
+			if (Network.AllNeurons.Count == 0) return;
 
-			for (int i = 0; i < neurons.Count; i++)
+			foreach (Neuron neuron in Network.AllNeurons)
 			{
-				GameObject neuronLayer = Layers.Find(x => x.GetComponent<LayerVisual>().Layer == neurons[i].Layer);
+				GameObject neuronLayer = Layers.Find(x => x.GetComponent<LayerVisual>().Layer == neuron.Layer);
 				GameObject newNeuron = Instantiate(NeuronPreFab, neuronLayer.transform);
-				newNeuron.GetComponent<NeuronVisual>().Id = neurons[i].Id;
+				
+				newNeuron.GetComponent<NeuronVisual>().Id = neuron.Id;
 				
 				AddNeuronToList();
 				// add neuron to his layer
@@ -86,7 +87,7 @@ public class VisBase : MonoBehaviour
 				void AddNeuronToList()
 				{
 					AllNeurons.Add(newNeuron);
-					switch (neurons[0].Type)
+					switch (neuron.Type)
 					{
 						case 0:
 							InputNeurons.Add(newNeuron);
