@@ -10,9 +10,9 @@ public class Brain : MonoBehaviour
 	[SerializeField] private float GrowSpeed;
 	[SerializeField] private string AvailableEnergyn;
 
-	public List<Organ> BirthOrgans { get; set; }
+	public Organism BirthOrganism { get; set; }
 	public List<GameObject> Organs { get; set; }
-	private List<Organ> ChiledOrgans { get; set; }
+	private Organism ChiledOrganism { get; set; }
 
 	private decimal NeededBirthEnergy;
 	private int ChiledCount;
@@ -42,20 +42,21 @@ public class Brain : MonoBehaviour
 	}
 	private void SetBirthOrgans()
 	{
-		if (BirthOrgans != null) return;
+		List<Organ> chiledOrgans = ChiledOrganism.BirthOrgans;
+		if (BirthOrganism != null) return;
 
-		BirthOrgans = new();
+		BirthOrganism = new();
 		foreach (Transform currOrgan in transform)
 		{
 			if (!currOrgan.CompareTag("Organ")) continue;
-			BirthOrgans.Add(GM.ToOrgan(currOrgan.gameObject));
+			chiledOrgans.Add(GM.ToOrgan(currOrgan.gameObject));
 		}
-		BirthOrgans.Add(GM.ToOrgan(gameObject));
+		chiledOrgans.Add(GM.ToOrgan(gameObject));
 	}
 	private void CreateBody()
 	{
 		if (transform.childCount > 0) return;
-		foreach (Organ organ in BirthOrgans)
+		foreach (Organ organ in BirthOrganism.BirthOrgans)
 		{
 			if (organ.Name != "Brain") continue;
 			GM.ToGameObject(organ, transform);
@@ -141,31 +142,32 @@ public class Brain : MonoBehaviour
 		//Create chiled
 		Egg egg = Instantiate(GM.Egg, transform.position, transform.rotation).GetComponent<Egg>();
 		egg.name = "Egg";
-		egg.BirthOrgans = ChiledOrgans;
+		egg.BirthOrganism = ChiledOrganism;
 		egg.GiveEnergy(ref Atrib.Energy, NeededBirthEnergy);
 
 		ChiledCount++;
 		SetChiledOrgans();
 	}
-	//Funktions
 	private void SetChiledOrgans()
 	{
-		ChiledOrgans = GM.CopyOrganList(BirthOrgans);
+		List<Organ> chiledOrgans = ChiledOrganism.BirthOrgans;
+
+		chiledOrgans = GM.CopyOrganList(BirthOrganism.BirthOrgans);
 		List<Vector2> freeOrganPlaces = FreeOrganPlaces();
-		AddRemoveOrgan(ChiledOrgans);
+		AddRemoveOrgan();
 		SetNeededBirthEnergy(); 
 		
 		void SetNeededBirthEnergy()
 		{
 			NeededBirthEnergy = 0;
-			foreach (Organ organ in ChiledOrgans)
+			foreach (Organ organ in chiledOrgans)
 			{
 				NeededBirthEnergy += (decimal)GM.NeededEnergyDict[organ.Name] * organ.Level;
 			}
 		}
-		void AddRemoveOrgan(List<Organ> inputList)
+		void AddRemoveOrgan()
 		{
-			inputList.Add(AddOrgan());
+			chiledOrgans.Add(AddOrgan());
 
 			Organ AddOrgan()
 			{
@@ -180,7 +182,7 @@ public class Brain : MonoBehaviour
 		List<Vector2> FreeOrganPlaces()
 		{
 			List<Vector2> output = new();
-			List<Vector2> organPosList = GetPos(BirthOrgans);
+			List<Vector2> organPosList = GetPos(chiledOrgans);
 
 			foreach (Vector2 organPos in organPosList)
 			{

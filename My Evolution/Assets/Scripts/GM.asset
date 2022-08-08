@@ -21,6 +21,7 @@ MonoBehaviour:
   Stomach: {fileID: 3331493411099893253, guid: 3a73e26cc893e464795ef9f80b0734b6, type: 3}
   Brain: {fileID: 1010751442758961323, guid: c6868614c83ea954fa1d028e59a87669, type: 3}
   Egg: {fileID: 7212910387707076604, guid: c4182fa9b353aab49a329f8071272c1a, type: 3}
+  Organism: {fileID: 0}
   Ear_NeededEnergy: 0.5
   Eye_NeededEnergy: 0.5
   Foot_NeededEnergy: 0.5

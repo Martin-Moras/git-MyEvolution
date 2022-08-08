@@ -5,13 +5,13 @@ public class Egg : MonoBehaviour
 {
 	[SerializeField] private GameManager GM;
 	[SerializeField] private float CrackSpeed;
-	public List<Organ> BirthOrgans { get; set; }
+	public Organism BirthOrganism { get; set; }
 	private Atributes Atrib;
 
 	private float crackTime;
 	public Egg(List<Organ> birthOrgans)
 	{
-		BirthOrgans = birthOrgans;
+		BirthOrganism.BirthOrgans = birthOrgans;
 	}
 	private void Start()
 	{
@@ -46,14 +46,14 @@ public class Egg : MonoBehaviour
 		{
 
 
-			brainOrgan = BirthOrgans.Find(x => x.Name == "Brain");
+			brainOrgan = BirthOrganism.BirthOrgans.Find(x => x.Name == "Brain");
 			brainObject = GM.CreateGameobject(brainOrgan, null, ref Atrib.Energy, transform.position, transform.rotation);
 			brainScript = brainObject.GetComponent<Brain>();
-			brainScript.BirthOrgans = BirthOrgans;
+			brainScript.BirthOrganism = BirthOrganism;
 		}
 		void CreateOrgans()
 		{
-			foreach (Organ organ in BirthOrgans)
+			foreach (Organ organ in BirthOrganism.BirthOrgans)
 			{
 				if (organ == brainOrgan) continue;
 
